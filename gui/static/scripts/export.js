@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportBtn = document.querySelector('.export-btn');
     const exportWrapper = document.querySelector('.export-wrapper');
     const exportFilename = document.getElementById('export-filename');
-    const exportConfirmBtn = document.querySelector('.export-confirm-btn');
     const overlayImage = document.getElementById('overlay-image');
 
     overlayBtn.addEventListener('click', () => {
@@ -53,22 +52,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     exportBtn.addEventListener('click', () => exportWrapper.classList.toggle('hidden'));
-
-    exportConfirmBtn.addEventListener('click', () => {
-        const filename = (exportFilename.value && exportFilename.value.trim()) || 'overlay.json';
-        const payload = {
-            exportedAt: new Date().toISOString(),
-            image: overlayImage.src || null
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        exportWrapper.classList.add('hidden');
-    });
 });

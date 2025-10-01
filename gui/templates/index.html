@@ -6,6 +6,7 @@
     <title>Printer Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/overlay.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/root.css') }}">
 </head>
 <body>
     <div class="bg-img"></div>
@@ -387,8 +388,19 @@
         <div class="overlay-editor">
             <div class="overlay-editor-header">
                 <h2>Overlay Editor</h2>
-                <div class="overlay-name-group" style="display:flex;gap:.5rem;align-items:center;">
-                    <input id="overlay-name" type="text" placeholder="Unnamed Overlay" style="flex:1;padding:.25rem .5rem;border-radius:4px;border:1px solid var(--border,#444);">
+                <button class="btn import-btn" title="Import template" aria-label="Import template">📥</button>
+                <button class="btn export-btn" title="Export template" aria-label="Export template">📤</button>
+                <div class="export-wrapper hidden">
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <label for="export-filename">Filename:</label>
+                    </div>
+                    <input type="text" id="export-filename" placeholder="overlayname.json">
+                    <button class="btn primary export-confirm-btn" type="button">Save</button>
+                    <label class="toggle" title="Save exported template to server">
+                        <span style="margin-left:.5rem;margin-right:.5rem;font-size:14px;">Save to server?</span>
+                        <input id="save-to-server" type="checkbox" checked>
+                        <span class="slider"><span></span></span>
+                    </label>
                 </div>
                 <button id="close-overlay-editor" class="btn" title="Close Overlay Editor">&times;</button>
             </div>
@@ -402,19 +414,13 @@
 
                 <!-- Controls -->
                 <div class="overlay-controls">
-                    <div class="form-group">
-                        <button class="btn import-btn">Import</button>
-                        <button class="btn export-btn">Export</button>
-                        <div class="export-wrapper hidden">
-                            <label for="export-filename">Filename:</label>
-                            <input type="text" id="export-filename" placeholder="overlayname.json">
-                            <button class="btn primary export-confirm-btn" type="button">Save</button>
+                    <div class="form-row" style="align-items:center; gap:1rem;">
+                        <div class="form-group" style="flex:1">
+                            <button class="btn primary add-text">Add Text</button>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <button class="btn primary add-text">Add Text</button>
-                        <small>Placeholders: %plotid%, %pc%, ...</small>
+                        <div class="form-group" style="flex:2">
+                            <small>Placeholders: %plotid%, %pc%, ...</small>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -422,39 +428,46 @@
                         <input id="text-content" type="text" placeholder="Edit selected text">
                     </div>
 
-                    <div class="form-group">
-                        <label for="font-family">Font</label>
-                        <select id="font-family">
-                            <option value="Inter, system-ui, sans-serif">Inter</option>
-                            <option value="Arial, Helvetica, sans-serif">Arial</option>
-                            <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                            <option value="'Times New Roman', Times, serif">Times New Roman</option>
-                            <option value="Georgia, serif">Georgia</option>
-                            <option value="'Courier New', Courier, monospace">Courier New</option>
-                        </select>
-                    </div>
-
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group" style="flex:1">
+                            <label for="font-family">Font</label>
+                            <select id="font-family">
+                                <option value="'Minecraft', 'Minecraftia', system-ui, sans-serif">Minecraft</option>
+                                <option value="Inter, system-ui, sans-serif">Inter</option>
+                                <option value="Arial, Helvetica, sans-serif">Arial</option>
+                                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                                <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Courier New', Courier, monospace">Courier New</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="width:110px">
                             <label for="font-size">Size</label>
                             <input id="font-size" type="number" min="8" max="300" step="1" value="24">
                         </div>
-                        <div class="form-group">
-                            <label for="text-color">Color</label>
-                            <input id="text-color" type="color" value="#ffffff">
-                            <label for="text-alpha">Alpha</label>
-                            <input id="text-alpha" type="range" min="0" max="1" step="0.01" value="1">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex:1">
+                            <label>Text Color</label>
+                            <div style="display:flex;gap:.5rem;align-items:center">
+                                <input id="text-color" type="color" value="#ffffff">
+                                <input id="text-alpha" type="range" min="0" max="1" step="0.01" value="1" title="Text alpha">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="bg-color">Background</label>
-                            <input id="bg-color" type="color" value="#000000">
-                            <label for="bg-alpha">Alpha</label>
-                            <input id="bg-alpha" type="range" min="0" max="1" step="0.01" value="0">
+
+                        <div class="form-group" style="flex:1">
+                            <label>Background</label>
+                            <div style="display:flex;gap:.5rem;align-items:center">
+                                <input id="bg-color" type="color" value="#000000">
+                                <input id="bg-alpha" type="range" min="0" max="1" step="0.01" value="0" title="Background alpha">
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group" style="flex:1">
                             <label for="text-align">Align</label>
                             <select id="text-align">
                                 <option value="left">Left</option>
@@ -462,26 +475,30 @@
                                 <option value="right">Right</option>
                             </select>
                         </div>
-                        <div class="form-group">
+
+                        <div class="form-group" style="flex:1">
                             <label for="rotation">Rotation</label>
                             <input id="rotation" type="range" min="-180" max="180" step="1" value="0">
                         </div>
-                        <div class="form-group">
+
+                        <div class="form-group" style="flex:1">
                             <label for="opacity">Opacity</label>
                             <input id="opacity" type="range" min="0" max="1" step="0.05" value="1">
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <button id="toggle-bold" class="btn">Bold</button>
-                        <button id="toggle-italic" class="btn">Italic</button>
-                        <button id="toggle-underline" class="btn">Underline</button>
-                    </div>
+                    <div class="form-row" style="gap:.5rem">
+                        <div class="form-group" style="flex:1;display:flex;gap:.5rem">
+                            <button id="toggle-bold" class="btn" title="Toggle bold">Bold</button>
+                            <button id="toggle-italic" class="btn" title="Toggle italic">Italic</button>
+                            <button id="toggle-underline" class="btn" title="Toggle underline">Underline</button>
+                        </div>
 
-                    <div class="form-row">
-                        <button id="bring-forward" class="btn">Bring Forward</button>
-                        <button id="send-backward" class="btn">Send Backward</button>
-                        <button id="delete-text" class="btn danger">Delete</button>
+                        <div class="form-group" style="display:flex;gap:.5rem">
+                            <button id="bring-forward" class="btn" title="Bring forward">Bring Forward</button>
+                            <button id="send-backward" class="btn" title="Send backward">Send Backward</button>
+                            <button id="delete-text" class="btn danger" title="Delete selected">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -571,6 +588,44 @@
                             })();
                             </script>
                             <button class="btn small danger delete-template" data-file="{{ tpl }}" title="Delete template">Delete</button>
+                            <script>
+                            (function(){
+                                const li = document.currentScript.closest('.template-item');
+                                if (!li) return;
+                                const delBtn = li.querySelector('.delete-template');
+                                if (!delBtn) return;
+
+                                delBtn.addEventListener('click', async () => {
+                                    const file = delBtn.dataset.file;
+                                    if (!file) return;
+                                    if (!confirm('Delete template "' + file + '"? This cannot be undone.')) return;
+
+                                    delBtn.disabled = true;
+                                    const prevText = delBtn.textContent;
+                                    delBtn.textContent = 'Deleting...';
+
+                                    try {
+                                        const res = await fetch('/api/delete-template/' + encodeURIComponent(file), { method: 'DELETE' });
+                                        if (res.status === 204) {
+                                            li.remove();
+                                        } else if (res.status === 404) {
+                                            alert('Template not found: ' + file);
+                                            delBtn.disabled = false;
+                                            delBtn.textContent = prevText;
+                                        } else {
+                                            const msg = await res.text().catch(() => res.statusText || 'Error');
+                                            alert('Failed to delete template: ' + (msg || res.status));
+                                            delBtn.disabled = false;
+                                            delBtn.textContent = prevText;
+                                        }
+                                    } catch (e) {
+                                        alert('Error deleting template.');
+                                        delBtn.disabled = false;
+                                        delBtn.textContent = prevText;
+                                    }
+                                });
+                            })();
+                            </script>
                         </li>
                     {% endfor %}
                 {% else %}
@@ -607,6 +662,10 @@
             });
         })();
     </script>
+
+    <footer class="site-footer" role="contentinfo" style="padding:0.75rem 1rem;text-align:center;font-size:.85rem;color:var(--muted,#999);">
+        <small>Website by <strong>nino.css</strong> · API by <strong>Hasenzahn1</strong></small>
+    </footer>
     
     <script src="{{ url_for('static', filename='scripts/name-file.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/overlay-editor.js') }}"></script>
