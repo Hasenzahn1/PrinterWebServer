@@ -1,0 +1,24 @@
+{
+  "exportedAt": "2025-09-29T15:51:35.139Z",
+  "image": "http://127.0.0.1:5000/static/images/Testpage.png",
+  "nodes": [
+    {
+      "text": "Double-click to edit",
+      "left": 91,
+      "top": 73,
+      "width": 222,
+      "height": 39,
+      "zIndex": 11,
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontSize": "24px",
+      "color": "rgb(28, 28, 215)",
+      "backgroundColor": "",
+      "textAlign": "",
+      "rotate": "",
+      "opacity": "",
+      "fontWeight": "",
+      "fontStyle": "",
+      "textDecoration": ""
+    }
+  ]
+}

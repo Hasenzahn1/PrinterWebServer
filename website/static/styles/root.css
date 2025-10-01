@@ -1,0 +1,86 @@
+/* =========================
+    Theme variables
+    ========================= */
+
+:root[data-theme="dark"] {
+     --color-bg: #0b1820e5;
+     --color-danger: #fb7185;
+     --color-danger-hover: #f43f5e;
+     --color-gray: #233041;
+     --color-header-bg: rgba(12, 22, 36, 0.8);
+     --color-muted: #9aa4b2;
+     --color-muted-2: #7b8794;
+     --color-muted-3: #1f2a37;
+     --color-panel-bg: rgba(15, 23, 36, 0);
+     --color-popup-bg: rgba(15, 23, 36, 0.5);
+     --color-primary: #60a5fa;
+     --color-primary-hover: #3b82f6;
+     --color-surface: rgba(11, 19, 32, 0.6);
+     --color-surface-2: rgba(14, 26, 43, 0.5);
+     --color-success: #34d399;
+     --color-text: #e6eef8;
+     --color-warning: #f59e0b;
+     --color-warning-hover: #d97706;
+     --color-white: #f8fafc;
+     --shadow-color: rgba(0,0,0,0.6);
+     --status-error-bg: rgba(251, 113, 133, 0.06);
+     --status-offline-bg: rgba(127, 140, 141, 0.04);
+     --status-pending-bg: rgba(245, 158, 11, 0.06);
+     --status-printing-bg: rgba(96, 165, 250, 0.06);
+     --status-info: #60a5fa;
+     --glass-border: rgba(255, 255, 255, 0.1);
+     --glass-border-strong: rgba(255, 255, 255, 0.15);
+}
+
+:root[data-theme="lyntr"] {
+    --color-bg: #f7fdfc00;
+    --color-danger: #ef4444;
+    --color-danger-hover: #dc2626;
+    --color-gray: #e6f6f4;
+    --color-header-bg: rgba(45, 126, 126, 0.3);
+    --color-muted: #3f6b68;
+    --color-muted-2: #9ed6c9;
+    --color-muted-3: #e8fbf9;
+    --color-panel-bg: rgba(45, 126, 126, 0.2);
+    --color-popup-bg: rgba(45, 126, 126, 0.1);
+    --color-primary: #06b6a4;
+    --color-primary-hover: #089389;
+    --color-surface: rgba(237, 253, 251, 0.85);
+    --color-surface-2: rgba(224, 252, 249, 0.9);
+    --color-success: #16a34a;
+    --color-text: #042f2d;
+    --color-warning: #f59e0b;
+    --color-warning-hover: #d97706;
+    --color-white: #ffffff;
+    --shadow-color: rgba(255, 255, 255, 0.75);
+    --status-error-bg: rgba(239, 68, 68, 0.06);
+    --status-offline-bg: rgba(120, 131, 131, 0.06);
+    --status-pending-bg: rgba(245, 158, 11, 0.06);
+    --status-printing-bg: rgba(6, 182, 164, 0.06);
+    --status-info: #089389;
+    --glass-border: rgba(6, 23, 18, 0.06);
+    --glass-border-strong: rgba(6, 23, 18, 0.12);
+}
+
+* {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+}
+
+html, body, .overlay-editor {
+     background-repeat: no-repeat;
+     background-size: cover;
+     background-attachment: fixed;
+     background-position: center;
+     overflow: auto;
+     -webkit-overflow-scrolling: touch;
+     
+     scrollbar-width: thin;
+     scrollbar-color: var(--color-primary) rgba(0,0,0,0.08);
+     scrollbar-gutter: stable;
+}
+
+html, body, .panel, header, .container, .current-box {
+     transition: background-color 200ms ease, color 200ms ease, box-shadow 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+}
