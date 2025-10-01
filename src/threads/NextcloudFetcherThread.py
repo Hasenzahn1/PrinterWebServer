@@ -13,9 +13,9 @@ from src.Config import Config
 
 
 class NextcloudFetcherThread(threading.Thread):
-    IMAGES_FOLDER = "../downloads/images/"
-    METADATA_FOLDER = "../downloads/metadata/"
-    TEMP_FOLDER = "../downloads/temp/"
+    IMAGES_FOLDER = "downloads/images/"
+    METADATA_FOLDER = "downloads/metadata/"
+    TEMP_FOLDER = "downloads/temp/"
 
     def __init__(self, config: Config, queue: Queue):
         super().__init__(name="NextcloudFetcherThread")
