@@ -408,18 +408,18 @@
             <div class="overlay-editor-content">
                 <!-- Stage -->
                 <div id="overlay-stage" class="overlay-stage">
-                    <img id="overlay-image" src="{{ url_for('static', filename='images/Testpage.png') }}" alt="Overlay Preview" class="overlay-image">
+                    <img id="overlay-image" src="{{ url_for('static', filename='images/preview2.jpg') }}" alt="Overlay Preview" class="overlay-image">
                     <div id="overlay-layer" class="overlay-layer" aria-label="Overlay elements layer"></div>
                 </div>
 
                 <!-- Controls -->
                 <div class="overlay-controls">
-                    <div class="form-row" style="align-items:center; gap:1rem;">
+                    <div class="form-row" style="display:flex;gap:.5rem;">
                         <div class="form-group" style="flex:1">
-                            <button class="btn primary add-text">Add Text</button>
+                            <button class="btn primary add-text" type="button" style="width:100%;">Add Text</button>
                         </div>
-                        <div class="form-group" style="flex:2">
-                            <small>Placeholders: %plotid%, %pc%, ...</small>
+                        <div class="form-group" style="flex:1">
+                            <button class="btn secondary add-image" type="button" style="width:100%;">Add Image</button>
                         </div>
                     </div>
 
@@ -438,7 +438,14 @@
                                 <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
                                 <option value="'Times New Roman', Times, serif">Times New Roman</option>
                                 <option value="Georgia, serif">Georgia</option>
-                                <option value="'Courier New', Courier, monospace">Courier New</option>
+                                <option value="'Courier New', Courier, monospace">Courier New</option> 
+                                <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+                                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+                                <option value="Impact, Charcoal, sans-serif">Impact</option>
+                                <option value="'Brush Script MT', cursive">Brush Script MT</option>
+                                <option value="'Papyrus', fantasy">Papyrus</option>
+                                <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                                <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
                             </select>
                         </div>
 
@@ -489,9 +496,9 @@
 
                     <div class="form-row" style="gap:.5rem">
                         <div class="form-group" style="flex:1;display:flex;gap:.5rem">
-                            <button id="toggle-bold" class="btn" title="Toggle bold">Bold</button>
-                            <button id="toggle-italic" class="btn" title="Toggle italic">Italic</button>
-                            <button id="toggle-underline" class="btn" title="Toggle underline">Underline</button>
+                            <button id="toggle-bold" class="btn" title="Toggle bold"><strong>Bold</strong></button>
+                            <button id="toggle-italic" class="btn" title="Toggle italic"><em>Italic</em></button>
+                            <button id="toggle-underline" class="btn" title="Toggle underline"><u>Underline </u></button>
                         </div>
 
                         <div class="form-group" style="display:flex;gap:.5rem">
@@ -667,8 +674,7 @@
         <small>Website by <strong>nino.css</strong> · API by <strong>Hasenzahn1</strong></small>
     </footer>
     
+    <script src="{{ url_for('static', filename='scripts/export-and-import.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/name-file.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/overlay-editor.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/export.js') }}"></script>
 </body>
 </html>

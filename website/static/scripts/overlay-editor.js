@@ -1,8 +1,10 @@
 (function () {
+    console.log("Overlay.js geladen");
     const stage = document.getElementById('overlay-stage');
     const layer = document.getElementById('overlay-layer');
 
-    const addBtn = document.querySelector('.add-text');
+    const addTextBtn = document.querySelector('.add-text');
+    const addImageBtn = document.querySelector('.add-image');
     const inputText = document.getElementById('text-content');
     const fontFamily = document.getElementById('font-family');
     const fontSize = document.getElementById('font-size');
@@ -35,16 +37,19 @@
         if (selected === node) fontSize.value = Math.round(px);
     }
 
+    // --- Node Selection ---
     function select(node) {
         if (selected === node) return;
         if (selected) selected.classList.remove('selected');
         selected = node;
-        if (selected) {
-            selected.classList.add('selected');
+        if (!selected) return;
+
+        selected.classList.add('selected');
+
+        if (selected.dataset.type === 'text') {
             inputText.value = selected.innerText;
             fontFamily.value = selected.style.fontFamily || "Inter, system-ui, sans-serif";
             fontSize.value = parseInt(selected.style.fontSize || 24, 10);
-
             const cs = getComputedStyle(selected);
             const colHex = toColor(cs.color) || '#ffffff';
             const bgHex = toColor(cs.backgroundColor) || '#00000000';
@@ -54,14 +59,22 @@
             textAlpha.value = c.a.toFixed(2);
             bg.value = b.hex6;
             bgAlpha.value = b.a.toFixed(2);
-
             align.value = selected.style.textAlign || 'left';
-            rotation.value = parseInt((selected.style.rotate || '0').replace('deg', ''), 10) || 0;
-            opacity.value = selected.style.opacity || 1;
             updateToggleState();
-        } else {
+        } else if (selected.dataset.type === 'image') {
             inputText.value = '';
+            fontFamily.value = '';
+            fontSize.value = '';
+            color.value = '#ffffff';
+            textAlpha.value = 1;
+            bg.value = '#000000';
+            bgAlpha.value = 0;
+            align.value = '';
+            boldBtn.ariaPressed = italicBtn.ariaPressed = underlineBtn.ariaPressed = 'false';
         }
+
+        rotation.value = parseInt((selected.style.rotate || '0').replace('deg', ''), 10) || 0;
+        opacity.value = selected.style.opacity || 1;
     }
 
     function toColor(computed) {
@@ -113,34 +126,72 @@
         node.style[prop] = `rgba(${r}, ${g}, ${b}, ${a})`;
     }
 
+    // --- Resize Observer ---
     const ro = new ResizeObserver(entries => {
         for (const entry of entries) {
             const node = entry.target;
             if (node.dataset.resizing !== '1') continue;
 
-            const baseW = parseFloat(node.dataset.baseWidth) || 0;
-            const baseFont = parseFloat(node.dataset.baseFont) || getFontPx(node);
-            if (!baseW) continue;
-
-            const currentW = node.offsetWidth;
-            const ratio = currentW / baseW;
-            const newFont = baseFont * ratio;
-            setFontPx(node, newFont);
+            if (node.dataset.type === 'text') {
+                const baseW = parseFloat(node.dataset.baseWidth) || 0;
+                const baseFont = parseFloat(node.dataset.baseFont) || getFontPx(node);
+                if (!baseW) continue;
+                const currentW = node.offsetWidth;
+                const ratio = currentW / baseW;
+                const newFont = baseFont * ratio;
+                setFontPx(node, newFont);
+            }
         }
     });
 
+    // --- Text Node Creation ---
     function createTextNode(text = 'Double-click to edit') {
         const node = document.createElement('div');
         node.className = 'text-node';
+        node.dataset.type = 'text';
         node.textContent = text;
         node.style.left = '10%';
         node.style.top = '10%';
         node.style.zIndex = String(++zCounter);
         node.style.fontFamily = "Inter, system-ui, sans-serif";
         node.style.fontSize = "24px";
+
         layer.appendChild(node);
+
         attachNodeEvents(node);
         ro.observe(node);
+        select(node);
+        return node;
+    }
+
+
+    // --- Image Node Creation ---
+    function createImageNode(src) {
+        const node = document.createElement('div');
+        node.className = 'image-node';
+        node.dataset.type = 'image';
+        node.style.position = 'absolute';
+        node.style.left = '10%';
+        node.style.top = '10%';
+        node.style.zIndex = String(++zCounter);
+        node.style.width = '200px';
+        node.style.height = '200px';
+        node.style.resize = 'both';
+        node.style.overflow = 'hidden';
+        node.style.cursor = 'move';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = '';
+        img.draggable = false;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'contain';
+        img.style.pointerEvents = 'none';
+
+        node.appendChild(img);
+        layer.appendChild(node);
+        attachNodeEvents(node);
         select(node);
         return node;
     }
@@ -156,8 +207,10 @@
             const nearBottom = e.clientY > rect.bottom - corner;
             if (nearRight || nearBottom) {
                 node.dataset.resizing = '1';
-                node.dataset.baseWidth = String(node.offsetWidth);
-                node.dataset.baseFont = String(getFontPx(node));
+                if (node.dataset.type === 'text') {
+                    node.dataset.baseWidth = String(node.offsetWidth);
+                    node.dataset.baseFont = String(getFontPx(node));
+                }
                 resizingNode = node;
                 return;
             }
@@ -176,7 +229,6 @@
             if (!drag) return;
             const dx = e.clientX - drag.startX;
             const dy = e.clientY - drag.startY;
-
             let newLeft = drag.left + dx;
             let newTop  = drag.top + dy;
 
@@ -192,17 +244,19 @@
         node.addEventListener('pointerup', () => { drag = null; });
         node.addEventListener('lostpointercapture', () => { drag = null; });
 
-        node.addEventListener('dblclick', () => {
-            node.contentEditable = 'true';
-            node.focus();
-            document.execCommand && document.execCommand('selectAll', false, null);
-            document.getSelection && document.getSelection().collapseToEnd();
-        });
+        if (node.dataset.type === 'text') {
+            node.addEventListener('dblclick', () => {
+                node.contentEditable = 'true';
+                node.focus();
+                document.execCommand && document.execCommand('selectAll', false, null);
+                document.getSelection && document.getSelection().collapseToEnd();
+            });
 
-        node.addEventListener('blur', () => {
-            node.contentEditable = 'false';
-            inputText.value = node.innerText;
-        });
+            node.addEventListener('blur', () => {
+                node.contentEditable = 'false';
+                inputText.value = node.innerText;
+            });
+        }
 
         node.addEventListener('click', (e) => { select(node); e.stopPropagation(); });
     }
@@ -218,35 +272,39 @@
 
     layer.addEventListener('click', () => select(null));
 
-    addBtn.addEventListener('click', () => {
+    // --- Add Buttons ---
+    addTextBtn.addEventListener('click', () => {
+        console.log("text added");
         const node = createTextNode();
         inputText.focus();
         inputText.select();
     });
 
-    inputText.addEventListener('input', () => { if (selected) selected.textContent = inputText.value; });
-    fontFamily.addEventListener('change', () => { if (selected) selected.style.fontFamily = fontFamily.value; });
-    fontSize.addEventListener('input', () => {
-        if (!selected) return;
-        setFontPx(selected, parseFloat(fontSize.value || 24));
+    addImageBtn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.addEventListener('change', async () => {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const url = URL.createObjectURL(file);
+            createImageNode(url);
+        });
+        input.click();
     });
 
-    function updateTextColor() {
-        if (!selected) return;
-        applyCssColor(selected, 'color', color.value, textAlpha.value);
-    }
-    function updateBgColor() {
-        if (!selected) return;
-        applyCssColor(selected, 'backgroundColor', bg.value, bgAlpha.value);
-    }
+    // --- Input Handlers ---
+    inputText.addEventListener('input', () => { if (selected?.dataset.type==='text') selected.textContent = inputText.value; });
+    fontFamily.addEventListener('change', () => { if (selected?.dataset.type==='text') selected.style.fontFamily = fontFamily.value; });
+    fontSize.addEventListener('input', () => { if (selected?.dataset.type==='text') setFontPx(selected, parseFloat(fontSize.value || 24)); });
 
+    function updateTextColor() { if (selected?.dataset.type==='text') applyCssColor(selected, 'color', color.value, textAlpha.value); }
+    function updateBgColor() { if (selected?.dataset.type==='text') applyCssColor(selected, 'backgroundColor', bg.value, bgAlpha.value); }
     color.addEventListener('input', updateTextColor);
     textAlpha.addEventListener('input', updateTextColor);
-
     bg.addEventListener('input', updateBgColor);
     bgAlpha.addEventListener('input', updateBgColor);
 
-    align.addEventListener('change', () => { if (selected) selected.style.textAlign = align.value; });
     rotation.addEventListener('input', () => {
         if (!selected) return;
         selected.style.rotate = rotation.value + 'deg';
@@ -254,189 +312,22 @@
     });
     opacity.addEventListener('input', () => { if (selected) selected.style.opacity = opacity.value; });
 
+    // --- Toggle State ---
     function updateToggleState() {
-        if (!selected) { boldBtn.ariaPressed = italicBtn.ariaPressed = underlineBtn.ariaPressed = 'false'; return; }
+        if (!selected || selected.dataset.type !== 'text') {
+            boldBtn.ariaPressed = italicBtn.ariaPressed = underlineBtn.ariaPressed = 'false';
+            return;
+        }
         boldBtn.ariaPressed = String(selected.style.fontWeight === '700' || selected.style.fontWeight === 'bold');
         italicBtn.ariaPressed = String(selected.style.fontStyle === 'italic');
         underlineBtn.ariaPressed = String((selected.style.textDecoration || '').includes('underline'));
     }
 
-    boldBtn.addEventListener('click', () => {
-        if (!selected) return;
-        selected.style.fontWeight = (selected.style.fontWeight === 'bold' || selected.style.fontWeight === '700') ? '400' : '700';
-        updateToggleState();
-    });
-    italicBtn.addEventListener('click', () => {
-        if (!selected) return;
-        selected.style.fontStyle = selected.style.fontStyle === 'italic' ? 'normal' : 'italic';
-        updateToggleState();
-    });
-    underlineBtn.addEventListener('click', () => {
-        if (!selected) return;
-        const has = (selected.style.textDecoration || '').includes('underline');
-        selected.style.textDecoration = has ? 'none' : 'underline';
-        updateToggleState();
-    });
+    boldBtn.addEventListener('click', () => { if (!selected?.dataset.type==='text') return; selected.style.fontWeight = (selected.style.fontWeight==='bold'||selected.style.fontWeight==='700')?'400':'700'; updateToggleState(); });
+    italicBtn.addEventListener('click', () => { if (!selected?.dataset.type==='text') return; selected.style.fontStyle = selected.style.fontStyle==='italic'?'normal':'italic'; updateToggleState(); });
+    underlineBtn.addEventListener('click', () => { if (!selected?.dataset.type==='text') return; const has=(selected.style.textDecoration||'').includes('underline'); selected.style.textDecoration = has?'none':'underline'; updateToggleState(); });
 
-    forwardBtn.addEventListener('click', () => {
-        if (!selected) return;
-        selected.style.zIndex = String(++zCounter);
-    });
-    backwardBtn.addEventListener('click', () => {
-        if (!selected) return;
-        selected.style.zIndex = String(Math.max(1, Number(selected.style.zIndex || 1) - 1));
-    });
-    deleteBtn.addEventListener('click', () => {
-        if (!selected) return;
-        const toRemove = selected;
-        select(null);
-        ro.unobserve(toRemove);
-        toRemove.remove();
-    });
-
-    function syncStageHeight() {
-        const img = document.getElementById('overlay-image');
-        if (!img.complete) { img.addEventListener('load', syncStageHeight, { once: true }); return; }
-    }
-    syncStageHeight();
-
-    function serializeNode(node) {
-        const rect = node.getBoundingClientRect();
-        const stageRect = stage.getBoundingClientRect();
-        const left = Math.round(node.offsetLeft);
-        const top = Math.round(node.offsetTop);
-        return {
-            text: node.innerText,
-            left,
-            top,
-            width: node.offsetWidth,
-            height: node.offsetHeight,
-            zIndex: Number(node.style.zIndex || 1),
-            fontFamily: node.style.fontFamily || '',
-            fontSize: node.style.fontSize || '',
-            color: node.style.color || '',
-            backgroundColor: node.style.backgroundColor || '',
-            textAlign: node.style.textAlign || '',
-            rotate: node.style.rotate || (node.style.transform || ''),
-            opacity: node.style.opacity != null ? node.style.opacity : 1,
-            fontWeight: node.style.fontWeight || '',
-            fontStyle: node.style.fontStyle || '',
-            textDecoration: node.style.textDecoration || ''
-        };
-    }
-
-    function serializeOverlay() {
-        const img = document.getElementById('overlay-image');
-        const nodes = Array.from(layer.querySelectorAll('.text-node')).map(serializeNode);
-        return {
-            exportedAt: new Date().toISOString(),
-            image: img ? img.src : null,
-            nodes
-        };
-    }
-
-    function clearNodes() {
-        const nodes = Array.from(layer.querySelectorAll('.text-node'));
-        for (const n of nodes) {
-            ro.unobserve(n);
-            n.remove();
-        }
-        selected = null;
-    }
-
-    function createNodeFromData(d) {
-        const node = document.createElement('div');
-        node.className = 'text-node';
-        node.textContent = d.text || '';
-        node.style.left = (typeof d.left === 'number' ? d.left + 'px' : (d.left || '10%'));
-        node.style.top  = (typeof d.top === 'number' ? d.top + 'px' : (d.top || '10%'));
-        if (d.width) node.style.width = d.width + 'px';
-        if (d.height) node.style.height = d.height + 'px';
-        if (d.zIndex) node.style.zIndex = String(d.zIndex);
-        if (d.fontFamily) node.style.fontFamily = d.fontFamily;
-        if (d.fontSize) node.style.fontSize = d.fontSize;
-        if (d.color) node.style.color = d.color;
-        if (d.backgroundColor) node.style.backgroundColor = d.backgroundColor;
-        if (d.textAlign) node.style.textAlign = d.textAlign;
-        if (d.rotate) {
-            const r = (typeof d.rotate === 'string' && d.rotate.includes('deg')) ? d.rotate : (d.rotate ? d.rotate + 'deg' : '0deg');
-            node.style.rotate = r;
-            node.style.transform = `rotate(${r.replace('deg','') || 0}deg)`;
-        }
-        if (d.opacity != null) node.style.opacity = String(d.opacity);
-        if (d.fontWeight) node.style.fontWeight = d.fontWeight;
-        if (d.fontStyle) node.style.fontStyle = d.fontStyle;
-        if (d.textDecoration) node.style.textDecoration = d.textDecoration;
-
-        layer.appendChild(node);
-        attachNodeEvents(node);
-        ro.observe(node);
-        return node;
-    }
-
-    function importOverlayFromObject(obj) {
-        if (!obj) return;
-        const img = document.getElementById('overlay-image');
-        if (obj.image) {
-            img.src = obj.image;
-        }
-        if (Array.isArray(obj.nodes)) {
-            clearNodes();
-            for (const n of obj.nodes) {
-                createNodeFromData(n);
-            }
-        }
-    }
-
-    function attachToGlobalFileInput() {
-        const fileInput = document.querySelector('input[type="file"][accept="image/*,application/json"]');
-        if (!fileInput) return;
-        fileInput.addEventListener('change', async () => {
-            const file = fileInput.files && fileInput.files[0];
-            if (!file) return;
-            if (file.type === 'application/json' || file.name.toLowerCase().endsWith('.json')) {
-                try {
-                    const text = await file.text();
-                    const data = JSON.parse(text);
-                    importOverlayFromObject(data);
-                } catch (err) {
-                    console.warn('Failed to import overlay JSON', err);
-                }
-            }
-        });
-    }
-
-    function attachExportHandler() {
-        const exportConfirmBtn = document.querySelector('.export-confirm-btn');
-        const exportFilename = document.getElementById('export-filename');
-        if (!exportConfirmBtn || !exportFilename) return;
-        exportConfirmBtn.addEventListener('click', (e) => {
-            const filename = (exportFilename.value && exportFilename.value.trim()) || 'overlay.json';
-            const payload = serializeOverlay();
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-            const exportWrapper = document.querySelector('.export-wrapper');
-            if (exportWrapper) exportWrapper.classList.add('hidden');
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            attachToGlobalFileInput();
-            attachExportHandler();
-        }, 50);
-    });
-
-    window.overlayEditor = window.overlayEditor || {};
-    window.overlayEditor.serialize = serializeOverlay;
-    window.overlayEditor.importObject = importOverlayFromObject;
-    window.overlayEditor.clearNodes = clearNodes;
-    window.overlayEditor.createNodeFromData = createNodeFromData;
+    forwardBtn.addEventListener('click', () => { if (!selected) return; selected.style.zIndex = String(++zCounter); });
+    backwardBtn.addEventListener('click', () => { if (!selected) return; selected.style.zIndex = String(Math.max(1, Number(selected.style.zIndex||1)-1)); });
+    deleteBtn.addEventListener('click', () => { if (!selected) return; selected.remove(); selected = null; });
 })();
