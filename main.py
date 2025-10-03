@@ -1,16 +1,38 @@
-from queue import Queue
+import logging
+import signal
+import sys
+import atexit
+from src.PrintManager import PrintManager
+from website import create_app
 
-from src.threads.NextcloudFetcherThread import NextcloudFetcherThread
-from src.Config import Config
 
+# ========= Website Setup ========= #
+def get_pm() -> PrintManager:
+    return getattr(app, "extensions", {}).get("printer_manager")
 
-queue = Queue()
+# ========= Stop Threads ========= #
+def cleanup(reason: str):
+    pm = get_pm()
+    if pm:
+        try:
+            app.logger.info("Shutting down PrintManager (%s)...", reason)
+            pm.stop()
+        except Exception:
+            app.logger.exception("Error while stopping PrintManager")
 
-config = Config("config.yml")
-fetcher = NextcloudFetcherThread(config, queue)
-fetcher.start()
+# ========= Main Program start ========= #
+if __name__ == "__main__":
+    try:
+        app = create_app()
 
-while True:
-    item = queue.get()
-    print(item)
+        state = PrintManager("config.yml", app)
+        state.start()
+
+        app.extensions["printer_manager"] = state
+        app.run(debug=True, use_reloader=False)
+    except Exception as e:
+        print(e)
+    finally:
+        # falls PyCharm hart stoppt und kein Signal/atexit kam
+        cleanup("finally")
 

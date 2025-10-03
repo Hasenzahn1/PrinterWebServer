@@ -612,7 +612,7 @@
                                     delBtn.textContent = 'Deleting...';
 
                                     try {
-                                        const res = await fetch('/api/delete-template/' + encodeURIComponent(file), { method: 'DELETE' });
+                                        const res = await fetch('/api/template/delete/' + encodeURIComponent(file), { method: 'DELETE' });
                                         if (res.status === 204) {
                                             li.remove();
                                         } else if (res.status === 404) {
