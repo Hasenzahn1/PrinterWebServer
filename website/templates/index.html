@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Printer Manager</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/overlay.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/root.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Printer Manager</title>
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/overlay.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/root.css') }}" />
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/mobile.css') }}" media="(max-width: 768px)">
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icon.png') }}">
+  <noscript>
+    <style>
+      .hidden{display:none!important}
+      .requires-js{display:none!important}
+    </style>
+  </noscript>
 </head>
 <body>
     <div class="bg-img"></div>
@@ -39,215 +46,150 @@
                 <button id="theme-toggle" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-pressed="false" title="Toggle Lyntr">Toggle Lyntr</button>
             </div>
 
-            <script>
-                (function(){
-                    const ddBtn = document.getElementById('appearance-dropdown-btn');
-                    const menu = document.getElementById('appearance-dropdown');
-                    const themeSwitch = document.getElementById('theme-switch');
-                    const themeBtn = document.getElementById('theme-toggle');
-                    const THEME_KEY = 'site-theme';
+      <button id="overlay-editor-btn" class="btn primary" title="Open overlay editor">Overlay Editor</button>
+    </div>
+  </header>
 
-                    function open(){ menu.classList.remove('hidden'); ddBtn.setAttribute('aria-expanded','true'); }
-                    function close(){ menu.classList.add('hidden'); ddBtn.setAttribute('aria-expanded','false'); }
+  <!-- ========================= MAIN ========================= -->
+  <main class="container">
+    <!-- Left Side -->
+    <section class="panel current">
+      <h2>Current Image</h2>
 
-                    ddBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        menu.classList.contains('hidden') ? open() : close();
-                    });
+      <div class="current-box">
+        <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="image-preview" alt="Current image preview" id="current-box-image" />
 
-                    document.addEventListener('click', (e) => {
-                        if (!menu.contains(e.target) && !ddBtn.contains(e.target)) close();
-                    });
-
-                    function applySliderVisual(input){
-                        const slider = input.nextElementSibling;
-                        if (!slider) return;
-                        const knob = slider.firstElementChild;
-                        if (input.checked){
-                            slider.style.background = 'var(--accent,#0a84ff)';
-                            knob.style.transform = 'translateX(18px)';
-                        } else {
-                            slider.style.background = '#444';
-                            knob.style.transform = 'translateX(0)';
-                        }
-                    }
-
-                    function setTheme(theme){
-                        document.documentElement.setAttribute('data-theme', theme);
-                        try { localStorage.setItem(THEME_KEY, theme); } catch(e){}
-                        if (themeBtn) {
-                            const isDark = theme === 'dark';
-                            themeBtn.setAttribute('aria-pressed', String(isDark));
-                            themeBtn.title = isDark ? 'Switch to Lyntr theme' : 'Switch to Dark theme';
-                            themeBtn.textContent = isDark ? 'Dark' : 'Lyntr';
-                        }
-                    }
-
-                    themeSwitch.addEventListener('change', () => {
-                        applySliderVisual(themeSwitch);
-                        setTheme(themeSwitch.checked ? 'dark' : 'lyntr');
-
-                        setTimeout(syncFromState, 50);
-                    }); 
-
-                    const obs = new MutationObserver(syncFromState);
-                    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-                    obs.observe(document.head, { childList: true, subtree: true });
-
-                    syncFromState();
-                })();
-            </script>
-            <button id="overlay-editor-btn" class="btn primary" title="Open overlay editor">Overlay Editor</button>
+        <div class="image-info">
+          <p id="current-box-pc"><strong>PC:</strong> Canstein1</p>
+          <p id="current-box-plot"><strong>Plot:</strong> 10;4</p>
+          <p id="current-box-overlay"><strong>Overlay:</strong> overlayname</p>
         </div>
-    </header>
-    <script>
-        (function(){
-            const btn = document.getElementById('theme-toggle');
-            const root = document.documentElement;
-            const KEY = 'site-theme';
-            function apply(theme){
-                root.setAttribute('data-theme', theme);
-                const isDark = theme === 'dark';
-                btn.setAttribute('aria-pressed', String(isDark));
-                btn.title = isDark ? 'Switch to Lyntr theme' : 'Switch to Dark theme';
-                btn.textContent = isDark ? 'Dark' : 'Lyntr';
-            }
-            let theme = localStorage.getItem(KEY) || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'lyntr');
-            apply(theme);
-            btn.addEventListener('click', () => {
-                theme = root.getAttribute('data-theme') === 'dark' ? 'lyntr' : 'dark';
-                localStorage.setItem(KEY, theme);
-                apply(theme);
-            });
-        })();
-    </script>
 
-    <main class="container">
-        <!-- Left Side -->
-            <section class="panel current">
-            <h2>Current Image</h2>
-            <div class="current-box">
-                <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="image-preview" alt="Current image preview">
-                <div class="image-info">
-                    <p><strong>PC:</strong> Canstein1</p>
-                    <p><strong>Plot:</strong> 10;4</p>
-                    <p><strong>Overlay:</strong> overlayname</p>
-                </div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 40%;"></div>
-            </div>
-            <small>Time left: 32s</small>
-        </section>
-        <section class="panel queue">
-            <div class="panel-header">
-                <h2>Queue</h2>
-            </div>
-            <div class="queue-list">
-                <div class="queue-item">
-                    <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="queue-image" alt="IMG">
-                    <div class="queue-info">
-                        <p><strong>PC:</strong> Canstein1</p>
-                        <p><strong>Plot:</strong> 10;4</p>
-                        <p><strong>Overlay:</strong> overlayname</p>
-                    </div>
-                    <button class="btn primary">Print</button>
-                </div>
-                <div class="queue-item">
-                    <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG">
-                    <div class="queue-info">
-                        <p><strong>PC:</strong> Canstein2</p>
-                        <p><strong>Plot:</strong> 12;5</p>
-                        <p><strong>Overlay:</strong> overlayname2</p>
-                    </div>
-                    <button class="btn primary">Print</button>
-                </div>
-                <div class="queue-item">
-                    <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG">
-                    <div class="queue-info">
-                        <p><strong>PC:</strong> Canstein3</p>
-                        <p><strong>Plot:</strong> 12;5</p>
-                        <p><strong>Overlay:</strong> overlayname3</p>
-                    </div>
-                    <button class="btn primary">Print</button>
-                </div>
-                <div class="queue-item">
-                    <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG">
-                    <div class="queue-info">
-                        <p><strong>PC:</strong> Canstein4</p>
-                        <p><strong>Plot:</strong> 12;5</p>
-                        <p><strong>Overlay:</strong> overlayname4</p>
-                    </div>
-                    <button class="btn primary">Print</button>
-                </div>
-                <div class="queue-item">
-                    <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG">
-                    <div class="queue-info">
-                        <p><strong>PC:</strong> Canstein5</p>
-                        <p><strong>Plot:</strong> 12;5</p>
-                        <p><strong>Overlay:</strong> overlayname5</p>
-                    </div>
-                    <button class="btn primary">Print</button>
-                </div>
-                <div class="queue-item">
-                    <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG">
-                    <div class="queue-info">
-                        <p><strong>PC:</strong> Canstein6</p>
-                        <p><strong>Plot:</strong> 12;5</p>
-                        <p><strong>Overlay:</strong> overlayname6</p>
-                    </div>
-                    <button class="btn primary">Print</button>
-                </div>
-            </div>
-        </section>
-        <!-- Right Side -->
-        <section class="panel controls">
-            <h2>Status: <span class="status-text printing">Printing</span></h2>
-            <label class="toggle">
-                <input type="checkbox" checked>
-                <span class="slider"></span> Print On Receive
-            </label>
-            <div class="control-buttons">
-                <button class="btn">Settings</button>
-                <button class="btn">More</button>
-                <button class="btn warning">Pause</button>
-            </div>
-            <div class="active-overlay">Active Overlay</div>
-        </section>
-        <section class="panel finished">
-            <h2>Finished</h2>
-            <div class="finished-list">
-                <div class="finished-item">
-                    <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG">
-                    <div class="finished-info">
-                        <p><strong>PC:</strong> Canstein3</p>
-                        <p><strong>Plot:</strong> 14;6</p>
-                    </div>
-                </div>
-                <div class="finished-item">
-                    <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG">
-                    <div class="finished-info">
-                        <p><strong>PC:</strong> Canstein3</p>
-                        <p><strong>Plot:</strong> 14;6</p>
-                    </div>
-                </div>
-                <div class="finished-item">
-                    <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG">
-                    <div class="finished-info">
-                        <p><strong>PC:</strong> Canstein3</p>
-                        <p><strong>Plot:</strong> 14;6</p>
-                    </div>
-                </div>
-                <div class="finished-item">
-                    <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG">
-                    <div class="finished-info">
-                        <p><strong>PC:</strong> Canstein3</p>
-                        <p><strong>Plot:</strong> 14;6</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+        <p id="current-box-no-data">No job currently running</p>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress" id="job-progress" style="width: 40%;"></div>
+      </div>
+      <small id="job-time-left">Time left: 32s</small>
+    </section>
+
+    <!-- Queue -->
+    <section class="panel queue">
+      <div class="panel-header">
+        <h2>Queue</h2>
+      </div>
+      <div class="queue-list" id="queue-list">
+        <div class="queue-item">
+          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="queue-image" alt="IMG" />
+          <div class="queue-info">
+            <p><strong>PC:</strong> Canstein1</p>
+            <p><strong>Plot:</strong> 10;4</p>
+            <p><strong>Overlay:</strong> overlayname</p>
+          </div>
+          <button class="btn primary">Print</button>
+        </div>
+        <div class="queue-item">
+          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
+          <div class="queue-info">
+            <p><strong>PC:</strong> Canstein2</p>
+            <p><strong>Plot:</strong> 12;5</p>
+            <p><strong>Overlay:</strong> overlayname2</p>
+          </div>
+          <button class="btn primary">Print</button>
+        </div>
+        <div class="queue-item">
+          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
+          <div class="queue-info">
+            <p><strong>PC:</strong> Canstein3</p>
+            <p><strong>Plot:</strong> 12;5</p>
+            <p><strong>Overlay:</strong> overlayname3</p>
+          </div>
+          <button class="btn primary">Print</button>
+        </div>
+        <div class="queue-item">
+          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
+          <div class="queue-info">
+            <p><strong>PC:</strong> Canstein4</p>
+            <p><strong>Plot:</strong> 12;5</p>
+            <p><strong>Overlay:</strong> overlayname4</p>
+          </div>
+          <button class="btn primary">Print</button>
+        </div>
+        <div class="queue-item">
+          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
+          <div class="queue-info">
+            <p><strong>PC:</strong> Canstein5</p>
+            <p><strong>Plot:</strong> 12;5</p>
+            <p><strong>Overlay:</strong> overlayname5</p>
+          </div>
+          <button class="btn primary">Print</button>
+        </div>
+        <div class="queue-item">
+          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
+          <div class="queue-info">
+            <p><strong>PC:</strong> Canstein6</p>
+            <p><strong>Plot:</strong> 12;5</p>
+            <p><strong>Overlay:</strong> overlayname6</p>
+          </div>
+          <button class="btn primary">Print</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Side Controls -->
+    <section class="panel controls">
+      <h2>Status: <span class="status-text printing" id="status-text">Printing</span></h2>
+
+      <label class="toggle">
+        <input type="checkbox" id="auto-print-toggle" checked />
+        <span class="slider"></span> Print On Receive
+      </label>
+
+      <div class="control-buttons">
+        <button class="btn" id="btn-settings">Settings</button>
+        <button class="btn" id="btn-more">More</button>
+        <button class="btn warning" id="btn-pause">Pause</button>
+      </div>
+
+      <div class="active-overlay" id="active-overlay">Active Overlay</div>
+    </section>
+
+    <!-- Finished -->
+    <section class="panel finished">
+      <h2>Finished</h2>
+      <div class="finished-list" id="finished-list">
+        <div class="finished-item">
+          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
+          <div class="finished-info">
+            <p><strong>PC:</strong> Canstein3</p>
+            <p><strong>Plot:</strong> 14;6</p>
+          </div>
+        </div>
+        <div class="finished-item">
+          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
+          <div class="finished-info">
+            <p><strong>PC:</strong> Canstein3</p>
+            <p><strong>Plot:</strong> 14;6</p>
+          </div>
+        </div>
+        <div class="finished-item">
+          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
+          <div class="finished-info">
+            <p><strong>PC:</strong> Canstein3</p>
+            <p><strong>Plot:</strong> 14;6</p>
+          </div>
+        </div>
+        <div class="finished-item">
+          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
+          <div class="finished-info">
+            <p><strong>PC:</strong> Canstein3</p>
+            <p><strong>Plot:</strong> 14;6</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
     <!-- Overlay Editor Container -->
     <div id="overlay-editor-container" class="overlay-editor-container hidden">
@@ -268,276 +210,151 @@
                 <button id="close-overlay-editor" class="btn" title="Close Overlay Editor">&times;</button>
             </div>
 
-            <div class="overlay-editor-content">
-                <!-- Stage -->
-                <div id="overlay-stage" class="overlay-stage">
-                    <img id="overlay-image" src="{{ url_for('static', filename='images/preview2.jpg') }}" alt="Overlay Preview" class="overlay-image">
-                    <div id="overlay-layer" class="overlay-layer" aria-label="Overlay elements layer"></div>
-                </div>
+      <div class="overlay-editor-content">
+        <!-- Stage -->
+        <div id="overlay-stage" class="overlay-stage">
+          <img id="overlay-image" src="{{ url_for('static', filename='images/preview2.jpg') }}" alt="Overlay Preview" class="overlay-image" />
+          <div id="overlay-layer" class="overlay-layer" aria-label="Overlay elements layer"></div>
+        </div>
 
-                <!-- Controls -->
-                <div class="overlay-controls">
-                    <div class="form-row" style="display:flex;gap:.5rem;">
-                        <div class="form-group" style="flex:1">
-                            <button class="btn primary add-text" type="button" style="width:100%;">Add Text</button>
-                        </div>
-                        <div class="form-group" style="flex:1">
-                            <button class="btn secondary add-image" type="button" style="width:100%;">Add Image</button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="text-content">Text</label>
-                        <input id="text-content" type="text" placeholder="Edit selected text">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group" style="flex:1">
-                            <label for="font-family">Font</label>
-                            <select id="font-family">
-                                <option value="'Minecraft', 'Minecraftia', system-ui, sans-serif">Minecraft</option>
-                                <option value="Inter, system-ui, sans-serif">Inter</option>
-                                <option value="Arial, Helvetica, sans-serif">Arial</option>
-                                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                                <option value="'Times New Roman', Times, serif">Times New Roman</option>
-                                <option value="Georgia, serif">Georgia</option>
-                                <option value="'Courier New', Courier, monospace">Courier New</option> 
-                                <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
-                                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
-                                <option value="Impact, Charcoal, sans-serif">Impact</option>
-                                <option value="'Brush Script MT', cursive">Brush Script MT</option>
-                                <option value="'Papyrus', fantasy">Papyrus</option>
-                                <option value="Verdana, Geneva, sans-serif">Verdana</option>
-                                <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="width:110px">
-                            <label for="font-size">Size</label>
-                            <input id="font-size" type="number" min="8" max="300" step="1" value="24">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group" style="flex:1">
-                            <label>Text Color</label>
-                            <div style="display:flex;gap:.5rem;align-items:center">
-                                <input id="text-color" type="color" value="#ffffff">
-                                <input id="text-alpha" type="range" min="0" max="1" step="0.01" value="1" title="Text alpha">
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="flex:1">
-                            <label>Background</label>
-                            <div style="display:flex;gap:.5rem;align-items:center">
-                                <input id="bg-color" type="color" value="#000000">
-                                <input id="bg-alpha" type="range" min="0" max="1" step="0.01" value="0" title="Background alpha">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group" style="flex:1">
-                            <label for="text-align">Align</label>
-                            <select id="text-align">
-                                <option value="left">Left</option>
-                                <option value="center">Center</option>
-                                <option value="right">Right</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="flex:1">
-                            <label for="rotation">Rotation</label>
-                            <input id="rotation" type="range" min="-180" max="180" step="1" value="0">
-                        </div>
-
-                        <div class="form-group" style="flex:1">
-                            <label for="opacity">Opacity</label>
-                            <input id="opacity" type="range" min="0" max="1" step="0.05" value="1">
-                        </div>
-                    </div>
-
-                    <div class="form-row" style="gap:.5rem">
-                        <div class="form-group" style="flex:1;display:flex;gap:.5rem">
-                            <button id="toggle-bold" class="btn" title="Toggle bold"><strong>Bold</strong></button>
-                            <button id="toggle-italic" class="btn" title="Toggle italic"><em>Italic</em></button>
-                            <button id="toggle-underline" class="btn" title="Toggle underline"><u>Underline </u></button>
-                        </div>
-
-                        <div class="form-group" style="display:flex;gap:.5rem">
-                            <button id="bring-forward" class="btn" title="Bring forward">Bring Forward</button>
-                            <button id="send-backward" class="btn" title="Send backward">Send Backward</button>
-                            <button id="delete-text" class="btn danger" title="Delete selected">Delete</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Controls -->
+        <div class="overlay-controls">
+          <div class="form-row" style="display:flex;gap:.5rem;">
+            <div class="form-group" style="flex:1">
+              <button class="btn primary add-text" type="button" style="width:100%;">Add Text</button>
             </div>
+            <div class="form-group" style="flex:1">
+              <button class="btn secondary add-image" type="button" style="width:100%;">Add Image</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="text-content">Text</label>
+            <input id="text-content" type="text" placeholder="Edit selected text" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex:1">
+              <label for="font-family">Font</label>
+              <select id="font-family">
+                <option value="'Minecraft', 'Minecraftia', system-ui, sans-serif">Minecraft</option>
+                <option value="Inter, system-ui, sans-serif">Inter</option>
+                <option value="Arial, Helvetica, sans-serif">Arial</option>
+                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Courier New', Courier, monospace">Courier New</option>
+                <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+                <option value="Impact, Charcoal, sans-serif">Impact</option>
+                <option value="'Brush Script MT', cursive">Brush Script MT</option>
+                <option value="'Papyrus', fantasy">Papyrus</option>
+                <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="width:110px">
+              <label for="font-size">Size</label>
+              <input id="font-size" type="number" min="8" max="300" step="1" value="24" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex:1">
+              <label>Text Color</label>
+              <div style="display:flex;gap:.5rem;align-items:center">
+                <input id="text-color" type="color" value="#ffffff" />
+                <input id="text-alpha" type="range" min="0" max="1" step="0.01" value="1" title="Text alpha" />
+              </div>
+            </div>
+
+            <div class="form-group" style="flex:1">
+              <label>Background</label>
+              <div style="display:flex;gap:.5rem;align-items:center">
+                <input id="bg-color" type="color" value="#000000" />
+                <input id="bg-alpha" type="range" min="0" max="1" step="0.01" value="0" title="Background alpha" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex:1">
+              <label for="text-align">Align</label>
+              <select id="text-align">
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="flex:1">
+              <label for="rotation">Rotation</label>
+              <input id="rotation" type="range" min="-180" max="180" step="1" value="0" />
+            </div>
+
+            <div class="form-group" style="flex:1">
+              <label for="opacity">Opacity</label>
+              <input id="opacity" type="range" min="0" max="1" step="0.05" value="1" />
+            </div>
+          </div>
+
+          <div class="form-row" style="gap:.5rem">
+            <div class="form-group" style="flex:1;display:flex;gap:.5rem">
+              <button id="toggle-bold" class="btn" title="Toggle bold"><strong>Bold</strong></button>
+              <button id="toggle-italic" class="btn" title="Toggle italic"><em>Italic</em></button>
+              <button id="toggle-underline" class="btn" title="Toggle underline"><u>Underline </u></button>
+            </div>
+
+            <div class="form-group" style="display:flex;gap:.5rem">
+              <button id="bring-forward" class="btn" title="Bring forward">Bring Forward</button>
+              <button id="send-backward" class="btn" title="Send backward">Send Backward</button>
+              <button id="delete-text" class="btn danger" title="Delete selected">Delete</button>
+            </div>
+          </div>
         </div>
-
-        <!-- Templates Panel -->
-        <div id="overlay-search-panel" class="overlay-search open">
-            <button class="collapse-toggle" type="button" title="Collapse templates panel" aria-label="Collapse templates panel" aria-expanded="true"></button>
-            <h3>Templates</h3>
-            <ul class="overlay-templates-list">
-                {% if overlay_templates %}
-                    {% for tpl in overlay_templates %}
-                        <li class="template-item" data-json="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}">
-                            <div class="template-preview" style="margin-bottom:.5rem;">
-                                <div class="overlay-stage" style="position:relative; overflow:hidden;">
-                                    <img src="{{ url_for('static', filename='images/Testpage.png') }}" alt="Template preview" class="overlay-image" style="display:block; width:100%; height:auto;">
-                                    <div class="overlay-layer" style="position:absolute; inset:0;"></div>
-                                </div>
-                            </div>
-
-                            <a href="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}" target="_blank" rel="noopener">{{ tpl }}</a>
-                            <button class="btn small import-template" data-file="{{ tpl }}" title="Import template">Import</button>
-                            <script>
-                            (function(){
-                                const li = document.currentScript.closest('.template-item');
-                                if (!li) return;
-                                const jsonUrl = li.dataset.json;
-                                const layer = li.querySelector('.overlay-layer');
-
-                                function createNode(d){
-                                    const node = document.createElement('div');
-                                    node.className = 'text-node';
-                                    node.textContent = d.text || '';
-
-                                    if (typeof d.left === 'number') node.style.left = d.left + 'px'; else if (d.left) node.style.left = d.left;
-                                    if (typeof d.top  === 'number') node.style.top  = d.top  + 'px'; else if (d.top)  node.style.top  = d.top;
-
-                                    node.style.position = 'absolute';
-                                    if (d.width)  node.style.width  = (typeof d.width  === 'number' ? d.width  + 'px' : d.width);
-                                    if (d.height) node.style.height = (typeof d.height === 'number' ? d.height + 'px' : d.height);
-                                    if (d.zIndex) node.style.zIndex = String(d.zIndex);
-
-                                    if (d.fontFamily) node.style.fontFamily = d.fontFamily;
-                                    if (d.fontSize)   node.style.fontSize   = (typeof d.fontSize === 'number' ? d.fontSize + 'px' : d.fontSize);
-                                    if (d.color)      node.style.color      = d.color;
-                                    if (d.backgroundColor) node.style.backgroundColor = d.backgroundColor;
-                                    if (d.textAlign)  node.style.textAlign  = d.textAlign;
-                                    if (d.rotate != null) {
-                                        const r = (typeof d.rotate === 'string' && d.rotate.includes('deg')) ? d.rotate : d.rotate + 'deg';
-                                        node.style.rotate = r;
-                                        node.style.transform = 'rotate(' + String(r).replace('deg','') + 'deg)';
-                                    }
-                                    if (d.opacity != null) node.style.opacity = String(d.opacity);
-                                    if (d.fontWeight) node.style.fontWeight = d.fontWeight;
-                                    if (d.fontStyle)  node.style.fontStyle  = d.fontStyle;
-                                    if (d.textDecoration) node.style.textDecoration = d.textDecoration;
-
-                                    node.style.pointerEvents = 'none';
-                                    layer.appendChild(node);
-                                }
-
-                                fetch(jsonUrl, { cache: 'no-store' })
-                                    .then(r => r.ok ? r.json() : null)
-                                    .then(obj => {
-                                        if (!obj || !Array.isArray(obj.nodes)) return;
-                                        obj.nodes.forEach(createNode);
-                                    })
-                                    .catch(() => {});
-
-                                const importBtn = li.querySelector('.import-template');
-                                if (importBtn) {
-                                    importBtn.addEventListener('click', async () => {
-                                        try {
-                                            const res = await fetch(jsonUrl, { cache: 'no-store' });
-                                            if (!res.ok) return alert('Failed to load template.');
-                                            const obj = await res.json();
-                                            if (window.overlayEditor && typeof window.overlayEditor.importObject === 'function') {
-                                                window.overlayEditor.importObject(obj);
-                                            } else {
-                                                alert('Overlay editor not ready.');
-                                            }
-                                        } catch (e) {
-                                            alert('Failed to import template.');
-                                        }
-                                    });
-                                }
-                            })();
-                            </script>
-                            <button class="btn small danger delete-template" data-file="{{ tpl }}" title="Delete template">Delete</button>
-                            <script>
-                            (function(){
-                                const li = document.currentScript.closest('.template-item');
-                                if (!li) return;
-                                const delBtn = li.querySelector('.delete-template');
-                                if (!delBtn) return;
-
-                                delBtn.addEventListener('click', async () => {
-                                    const file = delBtn.dataset.file;
-                                    if (!file) return;
-                                    if (!confirm('Delete template "' + file + '"? This cannot be undone.')) return;
-
-                                    delBtn.disabled = true;
-                                    const prevText = delBtn.textContent;
-                                    delBtn.textContent = 'Deleting...';
-
-                                    try {
-                                        const res = await fetch('/api/template/delete/' + encodeURIComponent(file), { method: 'DELETE' });
-                                        if (res.status === 204) {
-                                            li.remove();
-                                        } else if (res.status === 404) {
-                                            alert('Template not found: ' + file);
-                                            delBtn.disabled = false;
-                                            delBtn.textContent = prevText;
-                                        } else {
-                                            const msg = await res.text().catch(() => res.statusText || 'Error');
-                                            alert('Failed to delete template: ' + (msg || res.status));
-                                            delBtn.disabled = false;
-                                            delBtn.textContent = prevText;
-                                        }
-                                    } catch (e) {
-                                        alert('Error deleting template.');
-                                        delBtn.disabled = false;
-                                        delBtn.textContent = prevText;
-                                    }
-                                });
-                            })();
-                            </script>
-                        </li>
-                    {% endfor %}
-                {% else %}
-                    <li class="empty">No templates found!</li>
-                {% endif %}
-            </ul>
-        </div>
+      </div>
     </div>
 
-    <script>
-        (function(){
-            const KEY = 'overlayTemplatesCollapsed';
-            const panel = document.getElementById('overlay-search-panel') || document.querySelector('.overlay-search');
-            if (!panel) return;
-            const toggle = panel.querySelector('.collapse-toggle');
-            if (!toggle) return;
+    <!-- Templates Panel -->
+    <div id="overlay-search-panel" class="overlay-search open">
+      <button class="collapse-toggle" type="button" title="Collapse templates panel" aria-label="Collapse templates panel" aria-expanded="true"></button>
+      <h3>Templates</h3>
+      <ul class="overlay-templates-list">
+        {% if overlay_templates %}
+          {% for tpl in overlay_templates %}
+            <li class="template-item" data-json="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}">
+              <div class="template-preview" style="margin-bottom:.5rem;">
+                <div class="overlay-stage" style="position:relative; overflow:hidden;">
+                  <img src="{{ url_for('static', filename='images/Testpage.png') }}" alt="Template preview" class="overlay-image" style="display:block; width:100%; height:auto;" />
+                  <div class="overlay-layer" style="position:absolute; inset:0;"></div>
+                </div>
+              </div>
 
-            panel.classList.add('open');
+              <a href="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}" target="_blank" rel="noopener">{{ tpl }}</a>
+              <button class="btn small import-template" data-file="{{ tpl }}" title="Import template">Import</button>
+              <button class="btn small danger delete-template" data-file="{{ tpl }}" title="Delete template">Delete</button>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li class="empty">No templates found!</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
 
-            function applyState(collapsed){
-                panel.classList.toggle('collapsed', collapsed);
-                toggle.setAttribute('aria-expanded', String(!collapsed));
-                toggle.title = collapsed ? 'Expand templates panel' : 'Collapse templates panel';
-            }
+  <!-- ========================= FOOTER ========================= -->
+  <footer class="site-footer" role="contentinfo" style="padding:0.75rem 1rem;text-align:center;font-size:.85rem;color:var(--muted,#999);">
+    <small>Website by <strong>nino.css</strong> · API by <strong>Hasenzahn1</strong></small>
+  </footer>
 
-            let collapsed = false;
-            try { collapsed = localStorage.getItem(KEY) === '1'; } catch(e){}
-            applyState(collapsed);
+  <!-- ========================= SCRIPTS ========================= -->
+  <script src="scripts/export-and-import.js"></script>
+  <script src="scripts/name-file.js"></script>
+  <script src="scripts/utils.js"></script>
+  <script src="scripts/appearance.js"></script>
+  <script src="scripts/current-job.js"></script>
+  <script src="scripts/templates.js"></script>
 
-            toggle.addEventListener('click', () => {
-                collapsed = !panel.classList.contains('collapsed');
-                applyState(collapsed);
-                try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch(e){}
-            });
-        })();
-    </script>
-
-    <footer class="site-footer" role="contentinfo" style="padding:0.75rem 1rem;text-align:center;font-size:.85rem;color:var(--muted,#999);">
-        <small>Website by <strong>nino.css</strong> · API by <strong>Hasenzahn1</strong></small>
-    </footer>
-    
-    <script src="{{ url_for('static', filename='scripts/export-and-import.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/name-file.js') }}"></script>
 </body>
 </html>

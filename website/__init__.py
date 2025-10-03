@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .routes import template_routes, index
+from .routes import template_routes, index, current_job, images
 
 
 def create_app():
@@ -12,5 +12,7 @@ def create_app():
     app.extensions = getattr(app, "extensions", {})
     app.register_blueprint(template_routes.bp)
     app.register_blueprint(index.bp)
+    app.register_blueprint(current_job.bp)
+    app.register_blueprint(images.bp)
 
     return app

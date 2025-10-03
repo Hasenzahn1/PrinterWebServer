@@ -45,7 +45,7 @@ class PrinterThread(threading.Thread):
             return
 
         # Printer is still printing: Update Website progressbar? Maybe gather information if possible?
-        time.sleep(2)
+        time.sleep(1)
 
 
     def on_finish_print_image(self, element: PrintJob):
@@ -64,6 +64,7 @@ class PrinterThread(threading.Thread):
         self.state.log("Start Print Job")
 
         # TODO: Print
+        time.sleep(50)
 
 
 

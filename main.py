@@ -1,7 +1,3 @@
-import logging
-import signal
-import sys
-import atexit
 from src.PrintManager import PrintManager
 from website import create_app
 
