@@ -32,33 +32,33 @@
     ========================= */
 
 :root[data-theme="dark"] {
-     --color-bg: #0b1820e5;
-     --color-danger: #fb7185;
-     --color-danger-hover: #f43f5e;
-     --color-gray: #233041;
-     --color-header-bg: rgba(12, 22, 36, 0.8);
-     --color-muted: #9aa4b2;
-     --color-muted-2: #7b8794;
-     --color-muted-3: #1f2a37;
-     --color-panel-bg: rgba(15, 23, 36, 0);
-     --color-popup-bg: rgba(15, 23, 36, 0.5);
-     --color-primary: #60a5fa;
-     --color-primary-hover: #3b82f6;
-     --color-surface: rgba(11, 19, 32, 0.6);
-     --color-surface-2: rgba(14, 26, 43, 0.5);
+     --color-bg: rgba(7, 19, 35, 0.95);
+     --color-danger: #ff6b6b;
+     --color-danger-hover: #ff4b4b;
+     --color-gray: #24323b;
+     --color-header-bg: linear-gradient(180deg, rgba(10,24,40,0.9), rgba(6,14,26,0.85));
+     --color-muted: #9aa6b2;
+     --color-muted-2: #6f7d88;
+     --color-muted-3: #16232b;
+     --color-panel-bg: rgba(12, 20, 30, 0.55);
+     --color-popup-bg: rgba(10, 18, 28, 0.75);
+     --color-primary: #56c2ff;
+     --color-primary-hover: #2aa7ff;
+     --color-surface: rgba(10, 16, 26, 0.65);
+     --color-surface-2: rgba(14, 22, 34, 0.75);
      --color-success: #34d399;
-     --color-text: #e6eef8;
+     --color-text: #e6f3fb;
      --color-warning: #f59e0b;
      --color-warning-hover: #d97706;
-     --color-white: #f8fafc;
-     --shadow-color: rgba(0,0,0,0.6);
-     --status-error-bg: rgba(251, 113, 133, 0.06);
-     --status-offline-bg: rgba(127, 140, 141, 0.04);
+     --color-white: #ffffff;
+     --shadow-color: rgba(0, 6, 20, 0.65);
+     --status-error-bg: rgba(255, 107, 107, 0.06);
+     --status-offline-bg: rgba(127, 140, 141, 0.05);
      --status-pending-bg: rgba(245, 158, 11, 0.06);
-     --status-printing-bg: rgba(96, 165, 250, 0.06);
-     --status-info: #60a5fa;
-     --glass-border: rgba(255, 255, 255, 0.1);
-     --glass-border-strong: rgba(255, 255, 255, 0.15);
+     --status-printing-bg: rgba(86, 194, 255, 0.06);
+     --status-info: #56c2ff;
+     --glass-border: rgba(255, 255, 255, 0.06);
+     --glass-border-strong: rgba(255, 255, 255, 0.12);
 }
 
 :root[data-theme="lyntr"] {
@@ -90,6 +90,10 @@
     --glass-border: rgba(6, 23, 18, 0.06);
     --glass-border-strong: rgba(6, 23, 18, 0.12);
 }
+
+/* =========================
+    Global styles
+    ========================= */
 
 * {
      margin: 0;

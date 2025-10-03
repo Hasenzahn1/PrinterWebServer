@@ -7,10 +7,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/overlay.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/root.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/mobile.css') }}" media="(max-width: 768px)">
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icon.png') }}">
 </head>
 <body>
     <div class="bg-img"></div>
     <header>
+        <img src="{{ url_for('static', filename='images/icon.png') }}" alt="Logo" class="logo">
         <h1>Printer Manager</h1>
         <div class="header-controls">
             <div class="dropdown" style="position:relative;">
@@ -29,22 +34,9 @@
                             <span class="slider"><span></span></span>
                         </label>
                     </div>
-
-                    <div id="glass-item" class="dropdown-item">
-                        <div class="dropdown-item-label">
-                            <strong>Glass</strong>
-                            <small>Enable glass</small>
-                        </div>
-                        <label class="toggle">
-                            <input id="glass-switch" type="checkbox" checked>
-                            <span class="slider"><span></span></span>
-                        </label>
-                    </div>
                 </div>
 
-                <!-- Hidden legacy buttons kept for existing scripts to work -->
-                <button id="theme-toggle" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-pressed="false" title="Toggle color theme">Toggle Theme</button>
-                <button id="glass-btn" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-pressed="false" title="Enable glass look">Glass look</button>
+                <button id="theme-toggle" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-pressed="false" title="Toggle Lyntr">Toggle Lyntr</button>
             </div>
 
             <script>
@@ -52,12 +44,8 @@
                     const ddBtn = document.getElementById('appearance-dropdown-btn');
                     const menu = document.getElementById('appearance-dropdown');
                     const themeSwitch = document.getElementById('theme-switch');
-                    const glassSwitch = document.getElementById('glass-switch');
-                    const glassItem = document.getElementById('glass-item');
                     const themeBtn = document.getElementById('theme-toggle');
-                    const glassBtn = document.getElementById('glass-btn');
                     const THEME_KEY = 'site-theme';
-                    const GLASS_KEY = 'site-glass';
 
                     function open(){ menu.classList.remove('hidden'); ddBtn.setAttribute('aria-expanded','true'); }
                     function close(){ menu.classList.add('hidden'); ddBtn.setAttribute('aria-expanded','false'); }
@@ -95,86 +83,12 @@
                         }
                     }
 
-                    function disableGlassSilently(){
-                        const link = document.getElementById('glass-stylesheet');
-                        if (link) link.remove();
-                        try { localStorage.setItem(GLASS_KEY, '0'); } catch(e){}
-                        if (glassBtn) {
-                            glassBtn.setAttribute('aria-pressed', 'false');
-                            glassBtn.title = 'Enable glass look';
-                            glassBtn.textContent = 'Glass look';
-                        }
-                    }
-
-                    function enableGlassSilently(href){
-                        if (!document.getElementById('glass-stylesheet')) {
-                            const link = document.createElement('link');
-                            link.rel = 'stylesheet';
-                            link.href = href || (window.getComputedStyle(document.documentElement).getPropertyValue('--glass-stylesheet-href') || '');
-                            link.id = 'glass-stylesheet';
-                            document.head.appendChild(link);
-                        }
-                        try { localStorage.setItem(GLASS_KEY, '1'); } catch(e){}
-                        if (glassBtn) {
-                            glassBtn.setAttribute('aria-pressed', 'true');
-                            glassBtn.title = 'Disable glass look';
-                            glassBtn.textContent = 'Normal look';
-                        }
-                    }
-
-                    function syncFromState(){
-                        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                        themeSwitch.checked = isDark;
-                        applySliderVisual(themeSwitch);
-
-                        if (glassItem) {
-                            glassItem.style.display = '';
-                            glassItem.setAttribute('aria-hidden', 'false');
-                        }
-
-                        if (glassSwitch) {
-                            glassSwitch.checked = !!document.getElementById('glass-stylesheet');
-                            applySliderVisual(glassSwitch);
-                        }
-                    }
-
                     themeSwitch.addEventListener('change', () => {
                         applySliderVisual(themeSwitch);
                         setTheme(themeSwitch.checked ? 'dark' : 'lyntr');
 
-                        if (!themeSwitch.checked && glassSwitch && glassSwitch.checked) {
-                            if (glassBtn) {
-                                if (document.getElementById('glass-stylesheet')) glassBtn.click();
-                            } else {
-                                disableGlassSilently();
-                            }
-                        }
-
                         setTimeout(syncFromState, 50);
-                    });
-
-                    if (glassSwitch) {
-                        glassSwitch.addEventListener('change', () => {
-                            applySliderVisual(glassSwitch);
-
-                            const currentlyOn = !!document.getElementById('glass-stylesheet');
-                            const wantOn = glassSwitch.checked;
-
-                            if (wantOn) {
-                                if (document.documentElement.getAttribute('data-theme') !== 'dark') {
-                                    setTheme('dark');
-                                }
-                            }
-
-                            if (glassBtn) {
-                                if (wantOn !== currentlyOn) glassBtn.click();
-                            } else {
-                                if (wantOn && !currentlyOn) enableGlassSilently();
-                                if (!wantOn && currentlyOn) disableGlassSilently();
-                            }
-                            setTimeout(syncFromState, 50);
-                        });
-                    }
+                    }); 
 
                     const obs = new MutationObserver(syncFromState);
                     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
@@ -187,54 +101,6 @@
         </div>
     </header>
     <script>
-        (function(){
-            const BTN_ID = 'glass-btn';
-            const LINK_ID = 'glass-stylesheet';
-            const HREF = "{{ url_for('static', filename='styles/glas.css') }}";
-            const KEY = 'site-glass';
-            const THEME_BTN_ID = 'theme-toggle';
-            const btn = document.getElementById(BTN_ID);
-
-            function setThemeToggleVisibility(show) {
-                const themeBtn = document.getElementById(THEME_BTN_ID);
-                if (!themeBtn) return;
-                themeBtn.style.display = show ? '' : 'none';
-            }
-
-            function setState(on) {
-                btn.setAttribute('aria-pressed', String(Boolean(on)));
-                btn.title = on ? 'Disable glass look' : 'Enable glass look';
-                btn.textContent = on ? 'Normal look' : 'Glass look';
-                if (on) {
-                    if (!document.getElementById(LINK_ID)) {
-                        const link = document.createElement('link');
-                        link.rel = 'stylesheet';
-                        link.href = HREF;
-                        link.id = LINK_ID;
-                        document.head.appendChild(link);
-                    }
-                } else {
-                    const link = document.getElementById(LINK_ID);
-                    if (link) link.remove();
-                }
-                setThemeToggleVisibility(!on);
-                try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {
-                    console.log(e)
-                }
-            }
-
-            btn.addEventListener('click', () => {
-                const currentlyOn = !!document.getElementById(LINK_ID);
-                setState(!currentlyOn);
-            });
-
-            // initialize from storage
-            try {
-                const stored = localStorage.getItem(KEY);
-                setState(stored === '1');
-            } catch (e) {}
-        })();
-
         (function(){
             const btn = document.getElementById('theme-toggle');
             const root = document.documentElement;
@@ -391,9 +257,6 @@
                 <button class="btn import-btn" title="Import template" aria-label="Import template">📥</button>
                 <button class="btn export-btn" title="Export template" aria-label="Export template">📤</button>
                 <div class="export-wrapper hidden">
-                    <div style="display:flex;align-items:center;gap:.5rem;">
-                        <label for="export-filename">Filename:</label>
-                    </div>
                     <input type="text" id="export-filename" placeholder="overlayname.json">
                     <button class="btn primary export-confirm-btn" type="button">Save</button>
                     <label class="toggle" title="Save exported template to server">
