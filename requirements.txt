@@ -1,0 +1,4 @@
+pyocclient
+Pillow
+pyyaml
+flask

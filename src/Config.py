@@ -1,6 +1,5 @@
 import yaml
 
-
 class Config:
     def __init__(self, file_path = "../config.yml"):
         with open(file_path) as file:

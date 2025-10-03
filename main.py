@@ -22,7 +22,7 @@ if __name__ == "__main__":
         app = create_app()
 
         state = PrintManager("config.yml", app)
-        state.start()
+        # state.start()
 
         app.extensions["printer_manager"] = state
         app.run(debug=True, use_reloader=False)
@@ -31,4 +31,3 @@ if __name__ == "__main__":
     finally:
         # falls PyCharm hart stoppt und kein Signal/atexit kam
         cleanup("finally")
-

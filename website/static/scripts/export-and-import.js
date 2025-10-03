@@ -544,11 +544,217 @@
         });
     }
 
+    function attachExportToServerHandler() {
+        const exportBtn = document.querySelector('.export-server-btn');
+        const exportFilename = document.getElementById('export-filename');
+        if (!exportBtn || !exportFilename) return;
+
+        exportBtn.addEventListener('click', async () => {
+            let filename = (exportFilename.value && exportFilename.value.trim()) || 'overlay.json';
+            if (!filename.toLowerCase().endsWith('.json')) filename += '.json';
+
+            try {
+            const payload = await serializeOverlay();
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+
+            const form = new FormData();
+            form.append('template', blob, filename);
+
+            const resp = await fetch('/upload', {
+                method: 'POST',
+                body: form,
+                credentials: 'same-origin'
+            });
+
+            if (resp.status === 201) {
+                const exportWrapper = document.querySelector('.export-wrapper');
+                if (exportWrapper) exportWrapper.classList.add('hidden');
+                alert('Template uploaded successfully: ' + filename);
+            } else {
+                const body = await resp.json().catch(() => null) || await resp.text().catch(() => null);
+                console.warn('Failed to upload template', resp.status, body);
+                alert('Failed to upload template: ' + (resp.statusText || resp.status));
+            }
+            } catch (err) {
+            console.warn('Error uploading template', err);
+            alert('Error uploading template');
+            }
+        });
+    }
+    
+    // --- Keyboard Shortcuts ---
+    function attachKeyboardShortcuts() {
+        document.addEventListener('keydown', async (e) => {
+            const active = document.activeElement;
+            const isTyping = active && (
+                active.tagName === 'INPUT' ||
+                active.tagName === 'TEXTAREA' ||
+                active.isContentEditable
+            );
+
+            const mod = e.ctrlKey || e.metaKey;
+
+            if (isTyping && !['Escape', 'Delete', 'Backspace'].includes(e.key)) return;
+
+            function nudgeSelected(dx, dy) {
+                if (!selected) return;
+                const left = (parseFloat(selected.style.left) || selected.offsetLeft) + dx;
+                const top  = (parseFloat(selected.style.top)  || selected.offsetTop)  + dy;
+                const maxLeft = stage.clientWidth - selected.offsetWidth;
+                const maxTop  = stage.clientHeight - selected.offsetHeight;
+                selected.style.left = clamp(left, 0, Math.max(0, maxLeft)) + 'px';
+                selected.style.top  = clamp(top,  0, Math.max(0, maxTop))  + 'px';
+                e.preventDefault();
+            }
+
+            switch (e.key) {
+                case 'Escape':
+                    select(null);
+                    e.preventDefault();
+                    return;
+                case 'Delete':
+                case 'Backspace':
+                    if (selected && !isTyping) {
+                        const toRemove = selected;
+                        select(null);
+                        if (toRemove.dataset.type === 'text') ro.unobserve(toRemove);
+                        toRemove.remove();
+                        e.preventDefault();
+                    }
+                    return;
+                case 'ArrowLeft':
+                    if (mod && selected) { nudgeSelected(- (e.shiftKey ? 10 : 1), 0); return; }
+                    if (selected && !mod) { nudgeSelected(- (e.shiftKey ? 10 : 1), 0); return; }
+                    break;
+                case 'ArrowRight':
+                    if (mod && selected) { nudgeSelected((e.shiftKey ? 10 : 1), 0); return; }
+                    if (selected && !mod) { nudgeSelected((e.shiftKey ? 10 : 1), 0); return; }
+                    break;
+                case 'ArrowUp':
+                    if (mod && selected) {
+                        selected.style.zIndex = String(++zCounter);
+                        e.preventDefault();
+                        return;
+                    }
+                    if (selected) { nudgeSelected(0, - (e.shiftKey ? 10 : 1)); return; }
+                    break;
+                case 'ArrowDown':
+                    if (mod && selected) {
+                        selected.style.zIndex = String(Math.max(1, Number(selected.style.zIndex || 1) - 1));
+                        e.preventDefault();
+                        return;
+                    }
+                    if (selected) { nudgeSelected(0, (e.shiftKey ? 10 : 1)); return; }
+                    break;
+            }
+            
+            // Alt-key combos
+            if (e.altKey) {
+                const k = e.key.toLowerCase();
+
+                // Save / Export Alt+S
+                if (k === 's') {
+                    e.preventDefault();
+                    try {
+                        const filenameEl = document.getElementById('export-filename');
+                        let filename = (filenameEl && filenameEl.value && filenameEl.value.trim()) || 'overlay.json';
+                        if (!filename.toLowerCase().endsWith('.json')) filename += '.json';
+                        const payload = await serializeOverlay();
+                        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        URL.revokeObjectURL(url);
+                    } catch (err) {
+                        console.warn('Export shortcut failed', err);
+                    }
+                    return;
+                }
+
+                // Add text node Alt+T
+                if (k === 't') {
+                    e.preventDefault();
+                    const n = createTextNode();
+                    if (n) select(n);
+                    return;
+                }
+
+                // Duplicate selected Alt+D
+                if (k === 'd') {
+                    if (!selected) return;
+                    e.preventDefault();
+                    try {
+                        const data = await serializeNodeAsync(selected);
+                        // offset duplicated node slightly
+                        if (typeof data.left === 'number') data.left = data.left + 10;
+                        if (typeof data.top === 'number') data.top = data.top + 10;
+                        data.zIndex = ++zCounter;
+                        const newNode = createNodeFromData(data);
+                        if (newNode) select(newNode);
+                    } catch (err) {
+                        console.warn('Duplicate shortcut failed', err);
+                    }
+                    return;
+                }
+
+                // Bold Alt+B
+                if (k === 'b') {
+                    if (selected?.dataset.type === 'text') {
+                        e.preventDefault();
+                        selected.style.fontWeight = (selected.style.fontWeight === 'bold' || selected.style.fontWeight === '700') ? '400' : '700';
+                        updateToggleState();
+                    }
+                    return;
+                }
+
+                // Italic Alt+Shift+I (keep Alt+I reserved for adding images)
+                if (k === 'i' && e.shiftKey) {
+                    if (selected?.dataset.type === 'text') {
+                        e.preventDefault();
+                        selected.style.fontStyle = selected.style.fontStyle === 'italic' ? 'normal' : 'italic';
+                        updateToggleState();
+                    }
+                    return;
+                }
+
+                // Underline Alt+U
+                if (k === 'u') {
+                    if (selected?.dataset.type === 'text') {
+                        e.preventDefault();
+                        const has = (selected.style.textDecoration || '').includes('underline');
+                        selected.style.textDecoration = has ? 'none' : 'underline';
+                        updateToggleState();
+                    }
+                    return;
+                }
+
+                // Add image Alt+I - open image picker
+                if (k === 'i' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (addImageBtn) {
+                        addImageBtn.click();
+                    } else {
+                        const fileInput = document.querySelector('input[type="file"][accept="image/*,application/json"]');
+                        if (fileInput) fileInput.click();
+                    }
+                    return;
+                }
+            }
+        });
+    }
+
+    // --- Init ---
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             attachToGlobalFileInput();
             attachExportHandler();
+            attachExportToServerHandler();
             if (layer) layer.addEventListener('click', () => select(null));
+            attachKeyboardShortcuts();
         }, 50);
     });
 
@@ -558,3 +764,4 @@
     window.overlayEditor.clearNodes = clearNodes;
     window.overlayEditor.createNodeFromData = createNodeFromData;
 })();
+

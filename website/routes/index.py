@@ -6,10 +6,18 @@ bp = Blueprint("index", __name__, url_prefix="")
 
 @bp.route('/')
 def index():
-    dir_path = os.path.join(current_app.static_folder, 'overlay-templates')
-    try:
-        files = sorted(f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f)))
-    except FileNotFoundError:
-        files = []
+    templates_dir = os.path.join(current_app.static_folder, 'overlay-templates')
+    assets_dir = os.path.join(current_app.static_folder, 'overlay-assets')
+
+    def list_files(dir_path):
+        try:
+            return sorted(f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f)))
+        except FileNotFoundError:
+            return []
+
+    files = list_files(templates_dir)
+    assets = list_files(assets_dir)
+
     current_app.logger.debug('overlay templates: %s', files)
-    return render_template('index.html', overlay_templates=files)
+    current_app.logger.debug('overlay assets: %s', assets)
+    return render_template('index.html', overlay_templates=files, overlay_assets=assets)

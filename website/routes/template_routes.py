@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, current_app, render_template
+from flask import Blueprint, current_app
 from requests import request
 
 bp = Blueprint("template", __name__, url_prefix="/api/template")

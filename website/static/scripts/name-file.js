@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
         closeBtn.focus();
     });
 
-    closeBtn.addEventListener('click', () => container.classList.add('hidden'));
+    closeBtn.addEventListener('click', () => {
+        container.classList.add('hidden');
+    });
+
     container.addEventListener('click', (e) => {
         if (e.target === container) container.classList.add('hidden');
     });
