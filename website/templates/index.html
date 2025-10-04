@@ -4,13 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Printer Manager</title>
+
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/overlay.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/root.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/mobile.css') }}" media="(max-width: 768px)">
 
+    <!-- Icon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icon.png') }}">
+
+    <!-- Noscript -->
     <noscript>
         <style>
         .hidden{display:none!important}
@@ -19,6 +23,7 @@
     </noscript>
 </head>
 <body>
+  <!-- ========================= HEADER ========================= -->
   <header>
         <img src="{{ url_for('static', filename='images/icon.png') }}" alt="Logo" class="logo">
         <h1>Printer Manager</h1>
@@ -179,7 +184,7 @@
     </div>
   </main>
 
-    <!-- Overlay Editor Container -->
+  <!-- ========================= OVERLAY EDITOR ========================= -->
   <div id="overlay-editor-container" class="overlay-editor-container hidden">
         <div class="overlay-editor">
             <div class="overlay-editor-header">
@@ -213,6 +218,7 @@
             </div>
 
       <div class="overlay-editor-content">
+        
         <!-- Stage -->
         <div id="overlay-stage" class="overlay-stage">
           <!-- Grid -->
@@ -375,10 +381,9 @@
     </div>
   </div>
 
-<!-- Keyboard Shortcuts Tutorial -->
-<button id="open-shortcuts" class="btn" style="position:fixed;right:1rem;bottom:1rem;z-index:9999;" title="Keyboard shortcuts help" aria-haspopup="dialog" aria-controls="shortcuts-dialog">?</button>
-
-<div id="shortcuts-dialog" class="hidden" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+  <!-- ========================= KEYBOARD SHORTCUTS ========================= -->
+  <button id="open-shortcuts" class="btn" style="position:fixed;right:1rem;bottom:1rem;z-index:9999;" title="Keyboard shortcuts help" aria-haspopup="dialog" aria-controls="shortcuts-dialog">?</button>
+  <div id="shortcuts-dialog" class="hidden" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
     <div class="dialog-content">
         <h2 id="shortcuts-title">Overlay Editor Shortcuts</h2>
         <p>Hold Shift for larger movement where noted.</p>
@@ -400,7 +405,7 @@
 
         <button type="button" aria-label="Close" id="shortcuts-x" style="position:absolute;top:.4rem;right:.55rem;background:none;border:0;color:inherit;font-size:1.1rem;line-height:1;cursor:pointer;">×</button>
     </div>
-</div>
+  </div>
 
   <!-- ========================= FOOTER ========================= -->
   <footer class="site-footer" role="contentinfo" style="padding:0.75rem 1rem;text-align:center;font-size:.85rem;color:var(--muted,#999);">
@@ -408,34 +413,7 @@
   </footer>
 
   <!-- ========================= SCRIPTS ========================= -->
-  <script>
-    (function(){
-        const openBtn = document.getElementById('open-shortcuts');
-        const dialog  = document.getElementById('shortcuts-dialog');
-        const xBtn    = document.getElementById('shortcuts-x');
-        if(!openBtn || !dialog) return;
-
-        function open(){
-            dialog.classList.remove('hidden');
-            openBtn.setAttribute('aria-expanded','true');
-            const focusable = dialog.querySelectorAll('button,[href],summary');
-            (focusable[0]||dialog).focus({preventScroll:true});
-            document.addEventListener('keydown', escClose, { once:true });
-        }
-        function close(){
-            dialog.classList.add('hidden');
-            openBtn.setAttribute('aria-expanded','false');
-            openBtn.focus({preventScroll:true});
-        }
-        function escClose(e){
-            if(e.key === 'Escape'){ close(); }
-            else document.addEventListener('keydown', escClose, { once:true });
-        }
-        openBtn.addEventListener('click', open);
-        (xBtn||dialog).addEventListener('click', close);
-        dialog.addEventListener('click', e => { if(e.target === dialog) close(); });
-    })();
-  </script>
+  <script src="scripts/shortcuts.js"></script>
   <script src="scripts/export-and-import.js"></script>
   <script src="scripts/name-file.js"></script>
   <script src="scripts/utils.js"></script>

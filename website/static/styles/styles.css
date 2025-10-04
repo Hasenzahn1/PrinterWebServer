@@ -1478,6 +1478,8 @@ small {
      isolation: isolate;
      backdrop-filter: blur(12px) saturate(150%);
      -webkit-backdrop-filter: blur(12px) saturate(150%);
+     height: 1748px;
+     width: 1240px;
 }
 .overlay-stage::before {
      content: "";
