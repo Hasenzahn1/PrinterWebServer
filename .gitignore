@@ -1,3 +1,4 @@
 /downloads/
 /.venv/
+/config.yml
 config.yml

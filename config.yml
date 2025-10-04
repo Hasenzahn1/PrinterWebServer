@@ -2,4 +2,4 @@ nc_username: ""
 nc_password: ""
 nc_images_folder: "Team-Storage/Hasenzahn1/CloudSync/images/"
 nc_metadata_folder: "Team-Storage/Hasenzahn1/CloudSync/metadata/"
-nc_check_time: 5
+nc_check_time: 3

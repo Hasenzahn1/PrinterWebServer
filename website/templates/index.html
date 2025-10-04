@@ -50,144 +50,133 @@
 
   <!-- ========================= MAIN ========================= -->
   <main class="container">
-    <!-- Left Side -->
-    <section class="panel current">
-      <h2>Current Image</h2>
+    <div class="left-col">
+      <!-- Current -->
+      <section class="panel current">
+        <h2>Current Image</h2>
 
-      <div class="current-box">
-        <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="image-preview" alt="Current image preview" id="current-box-image" />
+        <div class="current-box">
+          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="image-preview" alt="Current image preview" id="current-box-image" />
 
-        <div class="image-info">
-          <p id="current-box-pc"><strong>PC:</strong> Canstein1</p>
-          <p id="current-box-plot"><strong>Plot:</strong> 10;4</p>
-          <p id="current-box-overlay"><strong>Overlay:</strong> overlayname</p>
+          <div class="image-info">
+            <p id="current-box-pc"><strong>PC:</strong> Canstein1</p>
+            <p id="current-box-plot"><strong>Plot:</strong> 10;4</p>
+            <p id="current-box-overlay"><strong>Overlay:</strong> overlayname</p>
+          </div>
+
+          <p id="current-box-no-data">No job currently running</p>
         </div>
 
-        <p id="current-box-no-data">No job currently running</p>
-      </div>
+        <div class="progress-bar">
+          <div class="progress" id="job-progress" style="width: 40%;"></div>
+        </div>
+        <small id="job-time-left">Time left: 32s</small>
+      </section>
 
-      <div class="progress-bar">
-        <div class="progress" id="job-progress" style="width: 40%;"></div>
-      </div>
-      <small id="job-time-left">Time left: 32s</small>
-    </section>
+      <!-- Controls -->
+      <section class="panel controls">
+        <h2>Status: <span class="status-text printing" id="status-text">Printing</span></h2>
 
-    <!-- Queue -->
-    <section class="panel queue">
-      <div class="panel-header">
-        <h2>Queue</h2>
-      </div>
-      <div class="queue-list" id="queue-list">
-        <div class="queue-item">
-          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="queue-image" alt="IMG" />
-          <div class="queue-info">
-            <p><strong>PC:</strong> Canstein1</p>
-            <p><strong>Plot:</strong> 10;4</p>
-            <p><strong>Overlay:</strong> overlayname</p>
-          </div>
-          <button class="btn primary">Print</button>
-        </div>
-        <div class="queue-item">
-          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
-          <div class="queue-info">
-            <p><strong>PC:</strong> Canstein2</p>
-            <p><strong>Plot:</strong> 12;5</p>
-            <p><strong>Overlay:</strong> overlayname2</p>
-          </div>
-          <button class="btn primary">Print</button>
-        </div>
-        <div class="queue-item">
-          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
-          <div class="queue-info">
-            <p><strong>PC:</strong> Canstein3</p>
-            <p><strong>Plot:</strong> 12;5</p>
-            <p><strong>Overlay:</strong> overlayname3</p>
-          </div>
-          <button class="btn primary">Print</button>
-        </div>
-        <div class="queue-item">
-          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
-          <div class="queue-info">
-            <p><strong>PC:</strong> Canstein4</p>
-            <p><strong>Plot:</strong> 12;5</p>
-            <p><strong>Overlay:</strong> overlayname4</p>
-          </div>
-          <button class="btn primary">Print</button>
-        </div>
-        <div class="queue-item">
-          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
-          <div class="queue-info">
-            <p><strong>PC:</strong> Canstein5</p>
-            <p><strong>Plot:</strong> 12;5</p>
-            <p><strong>Overlay:</strong> overlayname5</p>
-          </div>
-          <button class="btn primary">Print</button>
-        </div>
-        <div class="queue-item">
-          <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="queue-image" alt="IMG" />
-          <div class="queue-info">
-            <p><strong>PC:</strong> Canstein6</p>
-            <p><strong>Plot:</strong> 12;5</p>
-            <p><strong>Overlay:</strong> overlayname6</p>
-          </div>
-          <button class="btn primary">Print</button>
-        </div>
-      </div>
-    </section>
-    
- 
-    <!-- Right Side Controls -->
-    <section class="panel controls">
-      <h2>Status: <span class="status-text printing" id="status-text">Printing</span></h2>
+        <label class="toggle">
+          <input type="checkbox" id="auto-print-toggle" checked />
+          <span class="slider"></span> Print On Receive
+        </label>
 
-      <label class="toggle">
-        <input type="checkbox" id="auto-print-toggle" checked />
-        <span class="slider"></span> Print On Receive
-      </label>
+        <div class="control-buttons">
+          <button class="btn" id="btn-settings">Settings</button>
+          <button class="btn" id="btn-more">More</button>
+          <button class="btn warning" id="btn-pause">Pause</button>
+        </div>
 
-      <div class="control-buttons">
-        <button class="btn" id="btn-settings">Settings</button>
-        <button class="btn" id="btn-more">More</button>
-        <button class="btn warning" id="btn-pause">Pause</button>
-      </div>
+        <div class="active-overlay" id="active-overlay">Active Overlay</div>
+      </section>
+    </div>
+    <div class="right-col">
+      <!-- Unlisted -->
+      <section class="panel unlisted">
+        <h2>Unlisted</h2>
+        <div class="unlisted-list" id="unlisted-list">
+          <div class="unlisted-item">
+            <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="unlisted-image" alt="IMG" />
+            <div class="unlisted-info">
+              <p><strong>PC:</strong> Canstein1</p>
+              <p><strong>Plot:</strong> 10;4</p>
+              <p><strong>Overlay:</strong> overlayname</p>
+            </div>
+            <button class="btn primary">Print</button>
+          </div>
+          <div class="unlisted-item">
+            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
+            <div class="unlisted-info">
+              <p><strong>PC:</strong> Canstein2</p>
+              <p><strong>Plot:</strong> 12;5</p>
+              <p><strong>Overlay:</strong> overlayname2</p>
+            </div>
+            <button class="btn primary">Print</button>
+          </div>
+          <div class="unlisted-item">
+            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
+            <div class="unlisted-info">
+              <p><strong>PC:</strong> Canstein3</p>
+              <p><strong>Plot:</strong> 12;5</p>
+              <p><strong>Overlay:</strong> overlayname3</p>
+            </div>
+            <button class="btn primary">Print</button>
+          </div>
+          <div class="unlisted-item">
+            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
+            <div class="unlisted-info">
+              <p><strong>PC:</strong> Canstein4</p>
+              <p><strong>Plot:</strong> 12;5</p>
+              <p><strong>Overlay:</strong> overlayname4</p>
+            </div>
+            <button class="btn primary">Print</button>
+          </div>
+          <div class="unlisted-item">
+            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
+            <div class="unlisted-info">
+              <p><strong>PC:</strong> Canstein5</p>
+              <p><strong>Plot:</strong> 12;5</p>
+              <p><strong>Overlay:</strong> overlayname5</p>
+            </div>
+            <button class="btn primary">Print</button>
+          </div>
+          <div class="unlisted-item">
+            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
+            <div class="unlisted-info">
+              <p><strong>PC:</strong> Canstein6</p>
+              <p><strong>Plot:</strong> 12;5</p>
+              <p><strong>Overlay:</strong> overlayname6</p>
+            </div>
+            <button class="btn primary">Print</button>
+          </div>
+          
+        </div>
+      </section>
 
-      <div class="active-overlay" id="active-overlay">Active Overlay</div>
-    </section>
-
-    <!-- Finished -->
-    <section class="panel finished">
-      <h2>Finished</h2>
-      <div class="finished-list" id="finished-list">
-        <div class="finished-item">
-          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
-          <div class="finished-info">
-            <p><strong>PC:</strong> Canstein3</p>
-            <p><strong>Plot:</strong> 14;6</p>
+      <!-- Queue -->
+      <section class="panel queue">
+        <div class="panel-header">
+          <h2>Queue</h2>
+        </div>
+        <div class="queue-list" id="queue-list">
+          <div class="queue-item">
+            <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="unlisted-image" alt="IMG" />
+            <div class="queue-info">
+              <p><strong>PC:</strong> Canstein3</p>
+              <p><strong>Plot:</strong> 14;6</p>
+            </div>
+          </div>
+          <div class="queue-item">
+            <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="unlisted-image" alt="IMG" />
+            <div class="queue-info">
+              <p><strong>PC:</strong> Canstein3</p>
+              <p><strong>Plot:</strong> 14;6</p>
+            </div>
           </div>
         </div>
-        <div class="finished-item">
-          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
-          <div class="finished-info">
-            <p><strong>PC:</strong> Canstein3</p>
-            <p><strong>Plot:</strong> 14;6</p>
-          </div>
-        </div>
-        <div class="finished-item">
-          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
-          <div class="finished-info">
-            <p><strong>PC:</strong> Canstein3</p>
-            <p><strong>Plot:</strong> 14;6</p>
-          </div>
-        </div>
-        <div class="finished-item">
-          <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="finished-image" alt="IMG" />
-          <div class="finished-info">
-            <p><strong>PC:</strong> Canstein3</p>
-            <p><strong>Plot:</strong> 14;6</p>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
     <!-- Overlay Editor Container -->
