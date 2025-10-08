@@ -25,7 +25,7 @@ if __name__ == "__main__":
         state.start()
 
         app.extensions["printer_manager"] = state
-        app.run(debug=True, use_reloader=False)
+        app.run(debug=True, use_reloader=False, host="0.0.0.0")
     except Exception as e:
         print(e)
     finally:
