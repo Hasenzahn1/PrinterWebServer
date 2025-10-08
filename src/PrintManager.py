@@ -12,9 +12,10 @@ from src.threads.PrinterThread import PrinterThread
 class PrintManager:
     def __init__(self, config_file: str, app: Flask):
         self.status: str                 = ""
-        self.print_on_receive: bool      = False
+        self.print_on_receive: bool      = True
         self.config: Config              = Config(config_file)
-        self.queue: queue                = queue.Queue()
+        self.unlisted: list              = []
+        self.queue: list                 = []
         self.default_overlay: Overlay    = Overlay()
         self.app: Flask                  = app
 
@@ -23,14 +24,24 @@ class PrintManager:
         self.nextcloud_fetcher = NextcloudFetcherThread(self)
         self.printer_thread = PrinterThread(self)
 
-    def add_job(self, job):
-        self.queue.put(job)
-        self.log("Added Job: " + str(job))
+    def add_new_job(self, job):
+        if self.print_on_receive and len(self.queue) == 0:
+            self.queue.append(job)
+        else:
+            self.unlisted.append(job)
 
-    def get_element(self) -> PrintJob|None:
-        if self.queue.empty(): return None
-        self.current_print_job = self.queue.get()
+    def fetch_new_print_job(self) -> PrintJob | None:
+        if len(self.queue) == 0: return None
+        self.current_print_job = self.queue.pop(0)
+
+        # Enqueue next job
+        if self.print_on_receive and len(self.queue) == 0 and len(self.unlisted) > 0:
+            self.queue.append(self.unlisted.pop(0))
+
         return self.current_print_job
+
+    def set_print_on_receive(self, print_on_receive: bool):
+        self.print_on_receive = print_on_receive
 
     def start(self):
         self.nextcloud_fetcher.start()

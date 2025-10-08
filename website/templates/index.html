@@ -64,9 +64,9 @@
           <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="image-preview" alt="Current image preview" id="current-box-image" />
 
           <div class="image-info">
-            <p id="current-box-pc"><strong>PC:</strong> Canstein1</p>
-            <p id="current-box-plot"><strong>Plot:</strong> 10;4</p>
-            <p id="current-box-overlay"><strong>Overlay:</strong> overlayname</p>
+            <p id="current-box-pc"><strong>PC:</strong>-</p>
+            <p id="current-box-plot"><strong>Plot:</strong>-</p>
+            <p id="current-box-overlay"><strong>Overlay:</strong>-</p>
           </div>
 
           <p id="current-box-no-data">No job currently running</p>
@@ -98,64 +98,11 @@
     </div>
     <div class="right-col">
       <!-- Unlisted -->
+            <!-- Unlisted -->
       <section class="panel unlisted">
         <h2>Unlisted</h2>
         <div class="unlisted-list" id="unlisted-list">
-          <div class="unlisted-item">
-            <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="unlisted-image" alt="IMG" />
-            <div class="unlisted-info">
-              <p><strong>PC:</strong> Canstein1</p>
-              <p><strong>Plot:</strong> 10;4</p>
-              <p><strong>Overlay:</strong> overlayname</p>
-            </div>
-            <button class="btn primary">Print</button>
-          </div>
-          <div class="unlisted-item">
-            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
-            <div class="unlisted-info">
-              <p><strong>PC:</strong> Canstein2</p>
-              <p><strong>Plot:</strong> 12;5</p>
-              <p><strong>Overlay:</strong> overlayname2</p>
-            </div>
-            <button class="btn primary">Print</button>
-          </div>
-          <div class="unlisted-item">
-            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
-            <div class="unlisted-info">
-              <p><strong>PC:</strong> Canstein3</p>
-              <p><strong>Plot:</strong> 12;5</p>
-              <p><strong>Overlay:</strong> overlayname3</p>
-            </div>
-            <button class="btn primary">Print</button>
-          </div>
-          <div class="unlisted-item">
-            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
-            <div class="unlisted-info">
-              <p><strong>PC:</strong> Canstein4</p>
-              <p><strong>Plot:</strong> 12;5</p>
-              <p><strong>Overlay:</strong> overlayname4</p>
-            </div>
-            <button class="btn primary">Print</button>
-          </div>
-          <div class="unlisted-item">
-            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
-            <div class="unlisted-info">
-              <p><strong>PC:</strong> Canstein5</p>
-              <p><strong>Plot:</strong> 12;5</p>
-              <p><strong>Overlay:</strong> overlayname5</p>
-            </div>
-            <button class="btn primary">Print</button>
-          </div>
-          <div class="unlisted-item">
-            <img src="{{ url_for('static', filename='images/Testpage.png') }}" class="unlisted-image" alt="IMG" />
-            <div class="unlisted-info">
-              <p><strong>PC:</strong> Canstein6</p>
-              <p><strong>Plot:</strong> 12;5</p>
-              <p><strong>Overlay:</strong> overlayname6</p>
-            </div>
-            <button class="btn primary">Print</button>
-          </div>
-          
+          <!-- dynamisch per queues.js -->
         </div>
       </section>
 
@@ -165,22 +112,10 @@
           <h2>Queue</h2>
         </div>
         <div class="queue-list" id="queue-list">
-          <div class="queue-item">
-            <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="unlisted-image" alt="IMG" />
-            <div class="queue-info">
-              <p><strong>PC:</strong> Canstein3</p>
-              <p><strong>Plot:</strong> 14;6</p>
-            </div>
-          </div>
-          <div class="queue-item">
-            <img src="{{ url_for('static', filename='images/preview.jpg') }}" class="unlisted-image" alt="IMG" />
-            <div class="queue-info">
-              <p><strong>PC:</strong> Canstein3</p>
-              <p><strong>Plot:</strong> 14;6</p>
-            </div>
-          </div>
+          <!-- dynamisch per queues.js -->
         </div>
       </section>
+
     </div>
   </main>
 
@@ -420,5 +355,6 @@
   <script src="scripts/appearance.js"></script>
   <script src="scripts/current-job.js"></script>
   <script src="scripts/templates.js"></script>
+  <script src="scripts/queues.js"></script>
 </body>
 </html>

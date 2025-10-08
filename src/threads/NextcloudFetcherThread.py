@@ -61,7 +61,7 @@ class NextcloudFetcherThread(threading.Thread):
             metadata, nc_metadata_filename = self.check_and_download_metadata(file, new_file_name)
             if self.DELETE_METADATA_FILES and len(nc_metadata_filename) > 1: self.oc.delete(nc_metadata_filename)
 
-            self.state.add_job(PrintJob(downloaded_image, metadata))
+            self.state.add_new_job(PrintJob(new_file_name, downloaded_image, metadata))
 
     def check_and_download_metadata(self, image_file: FileInfo, new_file_name: str) -> (dict, str):
         """
