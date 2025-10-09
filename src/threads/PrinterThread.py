@@ -69,6 +69,8 @@ class PrinterThread(threading.Thread):
         self.counter = 50
 
     def pick_printer(self, conn):
+        print("Default" + conn.getDefault())
+        print("Other" + conn.getPrinters())
         return conn.getDefault() or sorted(conn.getPrinters().keys())[0]
 
     def print_pil_image(self, print_job: PrintJob):
@@ -91,7 +93,8 @@ class PrinterThread(threading.Thread):
 
             job_id = conn.printFile(printer, tmp_path, print_job.uuid, options)
             self.pm.log(f"Job {job_id} an '{printer}' gesendet.")
-
+        except Exception as e:
+            print(e)
         finally:
             # Temp-Datei aufräumen
             try:
