@@ -23,9 +23,9 @@ class PrintManager:
         self.nextcloud_fetcher = NextcloudFetcherThread(self)
         self.printer_thread = PrinterThread(self)
 
-        os.makedirs("/downloads/images", exist_ok=True)
-        os.makedirs("/downloads/metadata", exist_ok=True)
-        os.makedirs("/downloads/temp", exist_ok=True)
+        os.makedirs("downloads/images", exist_ok=True)
+        os.makedirs("downloads/metadata", exist_ok=True)
+        os.makedirs("downloads/temp", exist_ok=True)
 
     def add_new_job(self, job):
         if self.print_on_receive and len(self.queue) == 0:
