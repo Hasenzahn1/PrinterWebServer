@@ -2,6 +2,11 @@ import threading
 import time
 from typing import TYPE_CHECKING
 
+import cups
+import tempfile
+import os
+from PIL import Image
+
 from src.PrintJob import PrintJob
 
 if TYPE_CHECKING:
@@ -53,20 +58,46 @@ class PrinterThread(threading.Thread):
     def on_finish_print_image(self, element: PrintJob):
         self.pm.current_print_job = None
         self.pm.log("Finished printing image")
-        # TODO: Delete Image if successfully printed
-        pass
 
+        element.delete()
 
     def start_print_job(self, element: PrintJob):
         self.pm.current_print_job = element
-
-        element.apply_default_overlay_if_not_present(self.pm.default_overlay)
-        element.apply_overlay()
-
         self.pm.log("Start Print Job")
 
+        self.print_pil_image(element)
         self.counter = 50
 
+    def pick_printer(self, conn):
+        return conn.getDefault() or sorted(conn.getPrinters().keys())[0]
+
+    def print_pil_image(self, print_job: PrintJob):
+        options = {
+            "fit-to-page": "True",
+            "media": "A4",
+        }
+
+        img = print_job.open_and_preprocess_image()
+
+        conn = cups.Connection()
+        printer = self.pick_printer(conn)
+
+        # als temporäre Datei speichern (PNG oder JPEG)
+        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+        tmp_path = tmp.name
+        try:
+            img.save(tmp, format="PNG")
+            tmp.close()  # wichtig: schließen, damit CUPS die Datei lesen kann
+
+            job_id = conn.printFile(printer, tmp_path, print_job.uuid, options)
+            self.pm.log(f"Job {job_id} an '{printer}' gesendet.")
+
+        finally:
+            # Temp-Datei aufräumen
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
 
 
     def stop(self):

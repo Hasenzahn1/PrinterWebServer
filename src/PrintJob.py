@@ -1,4 +1,7 @@
 import json
+import os
+
+from PIL import Image
 
 from src.image.Overlay import Overlay
 
@@ -21,6 +24,12 @@ class PrintJob:
     def apply_overlay(self):
         print("Applying overlay")
         pass
+
+    def open_and_preprocess_image(self):
+        return Image.open(self.image_file)
+
+    def delete(self):
+        os.remove(self.image_file)
 
     def to_json(self):
         return json.dumps({
