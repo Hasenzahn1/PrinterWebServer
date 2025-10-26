@@ -348,13 +348,19 @@
   </footer>
 
   <!-- ========================= SCRIPTS ========================= -->
-  <script src="scripts/shortcuts.js"></script>
-  <script src="scripts/export-and-import.js"></script>
-  <script src="scripts/name-file.js"></script>
-  <script src="scripts/utils.js"></script>
-  <script src="scripts/appearance.js"></script>
-  <script src="scripts/current-job.js"></script>
-  <script src="scripts/templates.js"></script>
-  <script src="scripts/queues.js"></script>
+  <script src="scripts/js/core/app.js" defer></script>
+
+  <!-- UI / global small features -->
+  <script src="scripts/js/ui/appearance.js" defer></script>
+  <script src="scripts/js/ui/shortcuts.js" defer></script>
+
+  <!-- Queues -->
+  <script src="scripts/js/queues/current-job.js" defer></script>
+  <script src="scripts/js/queues/streams.js" defer></script>
+
+  <!-- Overlay editor -->
+  <script src="scripts/js/overlay/modal.js" defer></script>
+  <script src="scripts/js/overlay/editor.js" defer></script>
+  <script src="scripts/js/overlay/panel.js" defer></script>
 </body>
 </html>
