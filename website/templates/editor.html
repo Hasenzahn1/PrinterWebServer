@@ -277,12 +277,19 @@
   </div>
 
 <!-- Scripts -->
-  <script src="scripts/shortcuts.js"></script>
-  <script src="scripts/export-and-import.js"></script>
-  <script src="scripts/name-file.js"></script>
-  <script src="scripts/utils.js"></script>
-  <script src="scripts/appearance.js"></script>
-  <script src="scripts/templates.js"></script>
-  <script src="scripts/queues.js"></script>
+  <script src="scripts/core/app.js" defer></script>
+
+  <!-- UI / global small features -->
+  <script src="scripts/ui/appearance.js" defer></script>
+  <script src="scripts/ui/shortcuts.js" defer></script>
+
+  <!-- Queues -->
+  <script src="scripts/queues/current-job.js" defer></script>
+  <script src="scripts/queues/streams.js" defer></script>
+
+  <!-- Overlay editor -->
+  <script src="scripts/overlay/modal.js" defer></script>
+  <script src="scripts/overlay/editor.js" defer></script>
+  <script src="scripts/overlay/panel.js" defer></script>
 </body>
 </html>
