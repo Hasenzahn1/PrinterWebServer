@@ -5,32 +5,42 @@
     "use strict";
     const $ = (sel) => document.querySelector(sel);
 
-    const Fallbacks = { img: "/static/images/preview.jpg", pc: "Unknown", plot: "-", overlay: "-" };
+    const Fallbacks = {img: "/static/images/preview.jpg", pc: "Unknown", plot: "-", overlay: "-"};
     const clear = (node) => node && (node.textContent = "");
-    const emptyState = (root, text) => { const d = document.createElement("div"); d.className = "empty"; d.textContent = text; root.appendChild(d); };
+    const emptyState = (root, text) => {
+        const d = document.createElement("div");
+        d.className = "empty";
+        d.textContent = text;
+        root.appendChild(d);
+    };
 
     const itemHTML = (job, type) => {
         const pc = job?.pc_name ?? Fallbacks.pc;
         const plot = job?.plot ?? Fallbacks.plot;
         const overlay = job?.overlay ?? Fallbacks.overlay;
         const imgUrl = job?.image_url ?? Fallbacks.img;
+        const uuid = job?.uuid; // <-- wichtig
+
         const info = [
             `<p><strong>PC:</strong> ${pc}</p>`,
             `<p><strong>Plot:</strong> ${plot}</p>`,
             `<p><strong>Overlay:</strong> ${overlay}</p>`
         ].join("");
+
         if (type === "unlisted") {
-            return `<div class="unlisted-item">
+            return `<div class="unlisted-item" data-uuid="${uuid}">
                 <img src="${imgUrl}" class="unlisted-image" alt="IMG" loading="lazy" decoding="async">
                 <div class="unlisted-info">${info}</div>
-                <button class="btn primary" type="button">Print</button>
-            </div>`;
+                <button class="btn primary print-btn" type="button" data-uuid="${uuid}">Print</button>
+                </div>`;
         }
+
         return `<div class="queue-item">
             <img src="${imgUrl}" class="unlisted-image" alt="IMG" loading="lazy" decoding="async">
             <div class="queue-info">${info}</div>
-        </div>`;
+            </div>`;
     };
+
 
     const renderList = (list, rootId, type, emptyText) => {
         const root = $(rootId);
@@ -44,7 +54,12 @@
 
     const connectSSE = (url, onData) => {
         const es = new EventSource(url);
-        es.onmessage = (e) => { try { onData(JSON.parse(e.data)); } catch {} };
+        es.onmessage = (e) => {
+            try {
+                onData(JSON.parse(e.data));
+            } catch {
+            }
+        };
         es.onerror = () => es.close();
         return () => es.close();
     };
@@ -52,6 +67,41 @@
     document.addEventListener("DOMContentLoaded", () => {
         const stopUnlisted = connectSSE("/api/queues/unlisted", (list) => renderList(list, "#unlisted-list", "unlisted", "No unlisted jobs"));
         const stopQueue = connectSSE("/api/queues/queue", (list) => renderList(list, "#queue-list", "queue", "Queue is empty"));
-        window.addEventListener("beforeunload", () => { stopUnlisted(); stopQueue(); });
+        window.addEventListener("beforeunload", () => {
+            stopUnlisted();
+            stopQueue();
+        });
+
+        const unlistedRoot = document.querySelector("#unlisted-list");
+        if (unlistedRoot) {
+            unlistedRoot.addEventListener("click", async (ev) => {
+                const btn = ev.target.closest(".print-btn");
+                if (!btn) return;
+
+                const uuid = btn.getAttribute("data-uuid");
+                if (!uuid) return;
+
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch("/api/queues/print", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({uuid})
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.ok) {
+                        throw new Error(data.error || `HTTP ${res.status}`);
+                    }
+
+                    const item = btn.closest(".unlisted-item");
+                    if (item) item.remove();
+
+                } catch (err) {
+                    console.error("Failed to move job to queue:", err);
+                    btn.disabled = false;
+                }
+            });
+        }
     });
 })();

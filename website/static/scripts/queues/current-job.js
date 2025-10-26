@@ -14,6 +14,8 @@
     const $time = qs("#job-time-left");
     const $status = qs("#status-text");
 
+    console.log("Pc: " + $pc)
+
     // ARIA
     if ($progress) {
         $progress.setAttribute("role", "progressbar");
@@ -27,7 +29,8 @@
         if (!$status) return;
         const key = String(label).toLowerCase();
         $status.textContent = label;
-        $status.className = "status " + (STATUS_CLASS[key] || "offline");
+        $status.classList.remove('pending', 'printing', 'paused', 'error', "offline")
+        $status.classList.add((STATUS_CLASS[key] || "offline"));
         $status.setAttribute("aria-live", "polite");
     };
 
@@ -48,10 +51,11 @@
     };
 
     const showJob = (job) => {
+        console.log(job)
         if (!job) return hideJob();
-        const { image_url, pc, plot, overlay, progress, time_left } = job;
+        const { image_url, pc_name, plot, overlay, progress, time_left } = job;
         if ($img && image_url) $img.src = image_url;
-        if ($pc && pc !== undefined) $pc.innerHTML = `<strong>PC:</strong> ${pc}`;
+        if ($pc && pc_name !== undefined) $pc.innerHTML = `<strong>PC:</strong> ${pc_name}`;
         if ($plot && plot !== undefined) $plot.innerHTML = `<strong>Plot:</strong> ${plot}`;
         if ($overlay && overlay !== undefined) $overlay.innerHTML = `<strong>Overlay:</strong> ${overlay}`;
         if (typeof progress === "number") setProgress(clamp(progress, 0, 100));

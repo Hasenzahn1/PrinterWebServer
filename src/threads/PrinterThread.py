@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 class PrinterThread(threading.Thread):
 
-    PRINT_COUNTDOWN = 60
+    PRINT_COUNTDOWN = 5
 
     def __init__(self, pm: "PrintManager"):
         super().__init__(name="PrinterThread")

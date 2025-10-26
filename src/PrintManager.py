@@ -13,8 +13,8 @@ class PrintManager:
         self.status: str                 = ""
         self.print_on_receive: bool      = True
         self.config: Config              = Config(config_file)
-        self.unlisted: list              = []
-        self.queue: list                 = []
+        self.unlisted: list[PrintJob]    = []
+        self.queue: list[PrintJob]       = []
         self.default_overlay: Overlay    = Overlay()
         self.app: Flask                  = app
 
