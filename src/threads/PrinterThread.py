@@ -1,8 +1,11 @@
+CUPS_ENABLED = False
+
 import threading
 import time
 from typing import TYPE_CHECKING
 
-import cups
+if CUPS_ENABLED: import cups
+
 import tempfile
 import os
 from PIL import Image
@@ -11,6 +14,7 @@ from src.PrintJob import PrintJob
 
 if TYPE_CHECKING:
     from src.PrintManager import PrintManager
+
 
 
 class PrinterThread(threading.Thread):
@@ -22,7 +26,7 @@ class PrinterThread(threading.Thread):
         self.currently_printing = False
         self.counter = 0
 
-        self.conn = cups.Connection()
+        if CUPS_ENABLED: self.conn = cups.Connection()
 
     def run(self):
         while not self.stopped:
@@ -53,7 +57,7 @@ class PrinterThread(threading.Thread):
             self.on_finish_print_image(self.pm.current_print_job)
             return
 
-        self.read_status(self.conn)
+        if CUPS_ENABLED: self.read_status(self.conn)
 
         # Printer is still printing: Update Website progressbar? Maybe gather information if possible?
         time.sleep(1)
@@ -112,6 +116,7 @@ class PrinterThread(threading.Thread):
 
         img = print_job.open_and_preprocess_image()
 
+        if not CUPS_ENABLED: return
         printer = self.pick_printer(self.conn)
 
         # als temporäre Datei speichern (PNG oder JPEG)

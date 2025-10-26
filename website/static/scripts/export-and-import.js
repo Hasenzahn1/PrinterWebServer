@@ -560,7 +560,7 @@
             const form = new FormData();
             form.append('template', blob, filename);
 
-            const resp = await fetch('/upload', {
+            const resp = await fetch('/api/template/upload', {
                 method: 'POST',
                 body: form,
                 credentials: 'same-origin'
