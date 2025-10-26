@@ -15,13 +15,12 @@ def get_pm() -> "PrintManager":
 def unlisted():
     pm = get_pm()
     def event_stream():
-        unlisted_copy = ""
+        unlisted_copy = None
         while True:
             if list_to_checksum(pm.unlisted) != unlisted_copy:
                 js = job_list_to_json(pm.unlisted)
                 yield f"data: {js}\n\n"
                 unlisted_copy = list_to_checksum(pm.unlisted)
-                continue
 
             time.sleep(1)
 
@@ -36,14 +35,12 @@ def unlisted():
 def queue():
     pm = get_pm()
     def event_stream():
-        queue_copy = ""
+        queue_copy = None
         while True:
             if list_to_checksum(pm.queue) != queue_copy:
                 js = job_list_to_json(pm.queue)
-                print(js)
                 yield f"data: {js}\n\n"
                 queue_copy = list_to_checksum(pm.queue)
-                continue
 
             time.sleep(1)
 

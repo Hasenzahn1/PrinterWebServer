@@ -18,6 +18,30 @@
     $progress.setAttribute('aria-valuenow', '0');
   }
 
+    // === Status handling ===
+  const $status = qs('#status-text');
+
+  function statusClassFor(label) {
+    // Mappe Server-Status auf CSS-Klassen
+    switch ((label || '').toLowerCase()) {
+      case 'pending':   return 'pending';
+      case 'printing':  return 'printing';
+      case 'paused':   return 'paused';
+      case 'error':    return 'error';
+      default:         return 'offline';
+    }
+  }
+
+  function setStatusLabel(label) {
+    if (!$status) return;
+    $status.textContent = label || '—';
+    // bekannte Status-Klassen entfernen und neue setzen
+    $status.classList.remove('pending','printing','paused','error','offline');
+    $status.classList.add(statusClassFor(label));
+    // optional: Zugänglichkeit
+    $status.setAttribute('aria-live', 'polite');
+  }
+
   function setProgressPercent(pct) {
 
     if (!$progress) return;
@@ -74,7 +98,7 @@
     jobES.onerror = () => { /* EventSource reconnectet automatisch; UI beibehalten */ };
 
     // ===== Progress (value 0..1 + eta) =====
-    const progES = new EventSource('/api/current_job/progress/stream');
+    const progES = new EventSource('/api/current_job/progress');
 
     progES.onmessage = (e) => {
       try {
@@ -100,9 +124,28 @@
 
     progES.onerror = () => { /* ebenfalls: auto-reconnect, UI unverändert lassen */ };
 
+        // ===== Status (Waiting | Printing | …) =====
+    setStatusLabel('offline'); // Initialer UI-Zustand beim Laden
+
+    const statusES = new EventSource('/api/current_job/status');
+
+    statusES.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data && typeof data.status === 'string') {
+          setStatusLabel(data.status);
+        }
+      } catch {
+        // Ignoriere fehlerhafte Events
+      }
+    };
+
+    statusES.onerror = () => { /* auto-reconnect durch EventSource; UI beibehalten */ };
+
     window.addEventListener('beforeunload', () => {
       try { jobES.close(); } catch {}
       try { progES.close(); } catch {}
+      try { statusES.close(); } catch {}
     });
   });
 })();

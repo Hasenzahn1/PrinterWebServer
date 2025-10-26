@@ -41,7 +41,7 @@ def current_job():
     }
     return Response(event_stream(), headers=headers)
 
-@bp.route("/progress/stream")
+@bp.route("/progress")
 def progress_stream():
     pm = get_pm()
 
@@ -59,9 +59,38 @@ def progress_stream():
             if payload != last_sent:
                 yield f"data: {payload}\n\n"
                 last_sent = payload
-                print("yielded: " + str(payload))
 
             time.sleep(0.5)
+
+    headers = {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        # Optional (falls Nginx/Proxy): "X-Accel-Buffering": "no"
+    }
+    return Response(event_stream(), headers=headers)
+
+
+@bp.route("/status")
+def status_stream():
+    pm = get_pm()
+
+    def event_stream():
+        last_sent = None  # sorgt dafür, dass beim Verbindungsaufbau sofort gesendet wird
+        while True:
+            # serialize aktuellen Zustand
+            if pm.current_print_job is None:
+                payload = json.dumps({"status": "pending"})
+            else:
+                payload = json.dumps({"status": "printing"})
+
+            # nur senden, wenn sich etwas geändert hat ODER beim ersten Durchlauf
+            if payload != last_sent:
+                yield f"data: {payload}\n\n"
+                last_sent = payload
+                print("yielded: " + payload)
+
+            time.sleep(1)
 
     headers = {
         "Content-Type": "text/event-stream",
