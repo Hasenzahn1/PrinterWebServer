@@ -1,18 +1,13 @@
-// appearance.js — theme & glass controls (uses window.App)
+// appearance.js
 (function(){
   const { qs, qsa, root, safeStorage } = window.App;
 
   const ddBtn = qs('#appearance-dropdown-btn');
   const menu  = qs('#appearance-dropdown');
   const themeSwitch = qs('#theme-switch');
-  const glassSwitch = qs('#glass-switch');
-  const glassItem   = qs('#glass-item');
-  const themeBtn = qs('#theme-toggle'); // legacy
-  const glassBtn = qs('#glass-btn');   // legacy
   const THEME_KEY = 'site-theme';
   const GLASS_KEY = 'site-glass';
   const GLASS_LINK_ID = 'glass-stylesheet';
-  const GLASS_HREF = '/styles/glas.css'; // static path (no Jinja in external JS)
 
   function open(){ menu.classList.remove('hidden'); ddBtn.setAttribute('aria-expanded','true'); }
   function close(){ menu.classList.add('hidden'); ddBtn.setAttribute('aria-expanded','false'); }
@@ -69,25 +64,6 @@
     applySliderVisual(themeSwitch);
     if (!themeSwitch.checked && glassSwitch?.checked) disableGlass();
     setTimeout(sync, 50);
-  });
-
-  glassSwitch?.addEventListener('change', () => {
-    applySliderVisual(glassSwitch);
-    const wantOn = glassSwitch.checked;
-    if (wantOn && root.getAttribute('data-theme') !== 'dark') setTheme('dark');
-    wantOn ? enableGlass() : disableGlass();
-    setTimeout(sync, 50);
-  });
-
-  // Legacy buttons
-  qs('#glass-btn')?.addEventListener('click', () => {
-    const on = !document.getElementById(GLASS_LINK_ID);
-    on ? enableGlass() : disableGlass();
-    sync();
-  });
-  qs('#theme-toggle')?.addEventListener('click', () => {
-    const theme = root.getAttribute('data-theme') === 'dark' ? 'lyntr' : 'dark';
-    safeStorage.set(THEME_KEY, theme); setTheme(theme); sync();
   });
 
   // Initialize

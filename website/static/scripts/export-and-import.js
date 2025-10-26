@@ -764,4 +764,3 @@
     window.overlayEditor.clearNodes = clearNodes;
     window.overlayEditor.createNodeFromData = createNodeFromData;
 })();
-
