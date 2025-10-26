@@ -19,6 +19,7 @@ class PrintManager:
         self.app: Flask                  = app
 
         self.current_print_job: PrintJob = None
+        self.paused: bool                = False
 
         self.nextcloud_fetcher = NextcloudFetcherThread(self)
         self.printer_thread = PrinterThread(self)
@@ -28,6 +29,7 @@ class PrintManager:
         os.makedirs("downloads/temp", exist_ok=True)
 
     def add_new_job(self, job):
+        self.log("Added new job")
         if self.print_on_receive and len(self.queue) == 0:
             self.queue.append(job)
         else:

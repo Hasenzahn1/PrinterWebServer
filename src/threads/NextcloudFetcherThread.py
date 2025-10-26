@@ -46,17 +46,20 @@ class NextcloudFetcherThread(threading.Thread):
         """
         self.state.log("Fetching files...")
         files = self.oc.list(self.config.nc_images_folder)
+        if len(files) != 0: print("Files: " + str(files))
         for file in files:
+            print("#####################################")
             name = file.get_name()
+            print("File: " + str(name))
             if not name.endswith(".jpg") and not name.endswith(".png"):
                 self.oc.delete(file)
                 continue
-
             new_file_name = str(uuid.uuid4())
 
             # Download Image
             downloaded_image = self.download_image_to_png(file, new_file_name)
-            self.oc.delete(file)
+            if not self.oc.delete(file):
+                self.state.log("Failed to delete file: " + str(file))
 
             metadata, nc_metadata_filename = self.check_and_download_metadata(file, new_file_name)
             if self.DELETE_METADATA_FILES and len(nc_metadata_filename) > 1: self.oc.delete(nc_metadata_filename)

@@ -18,6 +18,9 @@ if TYPE_CHECKING:
 
 
 class PrinterThread(threading.Thread):
+
+    PRINT_COUNTDOWN = 50
+
     def __init__(self, pm: "PrintManager"):
         super().__init__(name="PrinterThread")
         self.pm = pm
@@ -34,6 +37,10 @@ class PrinterThread(threading.Thread):
             if self.pm.current_print_job is not None:
                 self.on_print()
             else: # Start new printing job if available
+                if self.pm.paused:
+                    time.sleep(1)
+                    continue
+
                 self.attempt_start_new_print_job()
 
 
@@ -101,7 +108,8 @@ class PrinterThread(threading.Thread):
         self.pm.log("Start Print Job")
 
         self.print_pil_image(element)
-        self.counter = 50
+        self.counter = self.PRINT_COUNTDOWN
+
 
     def pick_printer(self, conn):
         print("Default" + str(conn.getDefault()))
@@ -115,6 +123,7 @@ class PrinterThread(threading.Thread):
         }
 
         img = print_job.open_and_preprocess_image()
+        # img.show()
 
         if not CUPS_ENABLED: return
         printer = self.pick_printer(self.conn)
