@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .routes import template_routes, index_routes, current_job_routes, images_routes, queue_routes, settings, editor
+from .routes import template_routes, index_routes, current_job_routes, images_routes, queue_routes, controls_routes, editor
 
 
 def create_app():
@@ -15,7 +15,7 @@ def create_app():
     app.register_blueprint(current_job_routes.bp)
     app.register_blueprint(images_routes.bp)
     app.register_blueprint(queue_routes.bp)
-    app.register_blueprint(settings.bp)
     app.register_blueprint(editor.bp)
+    app.register_blueprint(controls_routes.bp)
 
     return app

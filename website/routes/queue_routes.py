@@ -1,7 +1,7 @@
 import time
 from copy import deepcopy
 from typing import TYPE_CHECKING
-from flask import Blueprint, current_app, Response
+from flask import Blueprint, current_app, Response, jsonify, request
 from src.PrintJob import PrintJob
 
 if TYPE_CHECKING: from src.PrintManager import PrintManager
@@ -51,6 +51,26 @@ def queue():
     }
     return Response(event_stream(), headers=headers)
 
+@bp.route("/print", methods=["POST"])
+def print_unlisted_job():
+    pm = get_pm()
+    if pm is None:
+        return jsonify({"ok": False, "error": "PrintManager missing"}), 500
+
+    data = request.get_json(silent=True) or {}
+    uuid = data.get("uuid")
+    if not uuid:
+        return jsonify({"ok": False, "error": "Missing 'uuid'"}), 400
+
+    # Unlisted nach UUID suchen
+    idx = next((i for i, j in enumerate(pm.unlisted) if j.uuid == uuid), None)
+    if idx is None:
+        return jsonify({"ok": False, "error": "Job not found"}), 404
+
+    job = pm.unlisted.pop(idx)
+    pm.queue.append(job)
+
+    return jsonify({"ok": True, "moved": True, "uuid": uuid})
 
 def job_list_to_json(queue: list[PrintJob]) -> str:
     parsed_elements = []

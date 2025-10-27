@@ -79,16 +79,17 @@ def status_stream():
         last_sent = None  # sorgt dafür, dass beim Verbindungsaufbau sofort gesendet wird
         while True:
             # serialize aktuellen Zustand
-            if pm.current_print_job is None:
-                payload = json.dumps({"status": "pending"})
-            else:
+            if pm.current_print_job is not None:
                 payload = json.dumps({"status": "printing"})
+            elif pm.paused:
+                payload = json.dumps({"status": "paused"})
+            else:
+                payload = json.dumps({"status": "pending"})
 
             # nur senden, wenn sich etwas geändert hat ODER beim ersten Durchlauf
             if payload != last_sent:
                 yield f"data: {payload}\n\n"
                 last_sent = payload
-                print("yielded: " + payload)
 
             time.sleep(1)
 
