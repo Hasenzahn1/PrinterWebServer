@@ -5,23 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "use strict";
     const $ = (s, r = document) => r.querySelector(s);
 
-    const overlayBtn = $("#overlay-editor-btn");
-    const container = $("#overlay-editor-container");
-    const closeBtn = $("#close-overlay-editor");
     const importBtn = $(".import-btn");
     const exportBtn = $(".export-btn");
     const exportWrapper = $(".export-wrapper");
     const exportFilename = $("#export-filename");
     const overlayImage = $("#overlay-image");
-    if (!overlayBtn || !container || !closeBtn) return;
-
-    const show = () => { container.classList.remove("hidden"); closeBtn.focus(); };
-    const hide = () => container.classList.add("hidden");
-
-    overlayBtn.addEventListener("click", show);
-    closeBtn.addEventListener("click", hide);
-    container.addEventListener("click", (e) => { if (e.target === container) hide(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !container.classList.contains("hidden")) hide(); });
 
     const fileInput = document.createElement("input");
     fileInput.type = "file";

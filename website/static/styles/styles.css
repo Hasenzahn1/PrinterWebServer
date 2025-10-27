@@ -481,27 +481,6 @@
      Utilities
 ========================= */
 
-.hidden {
-     opacity: 0;
-     transform: translateY(-6px) scale(0.995);
-     pointer-events: none !important;
-     transition: opacity 200ms ease, transform 200ms ease;
-     will-change: opacity, transform;
-}
-
-.hidden,
-.hidden * {
-     pointer-events: none !important;
-     cursor: default !important;
-     user-select: none !important;
-     -webkit-user-select: none !important;
-     touch-action: none !important;
-     caret-color: transparent !important;
-}
-
-.hidden.fade-out { animation: fadeOut 300ms forwards; }
-.hidden.fade-in { animation: fadeIn 300ms forwards; }
-
 @keyframes fadeOut {
      from { opacity: 1; transform: translateY(0) scale(1); }
      to   { opacity: 0; transform: translateY(-6px) scale(0.995); }

@@ -435,6 +435,51 @@
         });
     };
 
+    // Resizing support
+    (() => {
+        if (!stage || !layer) return;
+
+        const MIN_W = 20;
+        const MIN_H = 20;
+
+        const updateHoverCursor = (e) => {
+            if (drag || resizingNode) return;
+            const n = e.target && e.target.closest && e.target.closest(".text-node, .image-node");
+            if (!n) { layer.style.cursor = "default"; return; }
+            const r = n.getBoundingClientRect();
+            const near = (v, edge) => Math.abs(v - edge) <= 14;
+            const overResize = near(e.clientX, r.right) || near(e.clientY, r.bottom);
+            layer.style.cursor = overResize ? "nwse-resize" : "move";
+        };
+
+        layer.addEventListener("pointermove", updateHoverCursor);
+        layer.addEventListener("mouseleave", () => { if (!resizingNode && !drag) layer.style.cursor = "default"; });
+
+        window.addEventListener("pointermove", (e) => {
+            if (!resizingNode) return;
+            const rect = stage.getBoundingClientRect();
+            const x = clamp(e.clientX - rect.left, 0, stage.clientWidth);
+            const y = clamp(e.clientY - rect.top, 0, stage.clientHeight);
+
+            const left = resizingNode.offsetLeft;
+            const top = resizingNode.offsetTop;
+
+            let newW = clamp(x - left, MIN_W, Math.max(MIN_W, stage.clientWidth - left));
+            let newH = clamp(y - top, MIN_H, Math.max(MIN_H, stage.clientHeight - top));
+
+            if (e.shiftKey && resizingNode.dataset.type === "image") {
+                const currW = Math.max(1, resizingNode.offsetWidth || newW);
+                const currH = Math.max(1, resizingNode.offsetHeight || newH);
+                const ratio = currH / currW;
+                if (newW * ratio > newH) newW = newH / ratio; else newH = newW * ratio;
+            }
+
+            resizingNode.style.width = Math.round(newW) + "px";
+            resizingNode.style.height = Math.round(newH) + "px";
+            e.preventDefault();
+        });
+    })();
+
     // Init
     document.addEventListener("DOMContentLoaded", () => {
         attachToGlobalFileInput();

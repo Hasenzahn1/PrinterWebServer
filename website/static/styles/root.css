@@ -40,7 +40,7 @@
      --color-muted: #9aa6b2;
      --color-muted-2: #6f7d88;
      --color-muted-3: #16232b;
-     --color-panel-bg: rgba(12, 20, 30, 0.55);
+     --color-panel-bg: rgba(25, 33, 43, 0.2);
      --color-popup-bg: rgba(10, 18, 28, 0.75);
      --color-primary: #56c2ff;
      --color-primary-hover: #2aa7ff;
@@ -246,24 +246,8 @@ header h1 {
 
 .header-controls .dropdown { display: inline-flex; align-items: center; position: relative; }
 
-#appearance-dropdown-btn {
-     width: 44px;
-     height: 44px;
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     border-radius: 10px;
-     background: linear-gradient(145deg, var(--color-surface), var(--color-surface-2));
-     color: var(--color-text);
-     border: 1px solid var(--glass-border);
-     box-shadow:
-          0 8px 24px rgba(0,0,0,0.08),
-          inset 0 1px 0 var(--glass-border-strong);
-     transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
-}
-
 #overlay-editor-btn {
-     min-width: 140px;
+     min-width: 120px;
      padding: 8px 14px;
 }
 
@@ -296,100 +280,130 @@ header .logo:focus-visible {
      border-radius: 10px;
 }
 
-
 /* =========================
      Buttons
 ========================= */
 
 .btn {
-     padding: 8px 16px;
-     border: 1px solid var(--glass-border);
-     border-radius: 6px;
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 8px;
+     min-height: 40px;
+     padding: 8px 14px;
+     border-radius: 10px;
+     border: 1px solid transparent;
      cursor: pointer;
-     font-size: 0.9rem;
-     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-     position: relative;
-     font-weight: 500;
-     letter-spacing: .3px;
-     backdrop-filter: blur(8px);
-     -webkit-backdrop-filter: blur(8px);
-     overflow: hidden;
-}
-.btn:active { transform: translateY(1px); }
-
-.btn::before {
-     content: "";
-     position: absolute;
-     top: 0;
-     left: 0;
-     right: 0;
-     bottom: 0;
-     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-     pointer-events: none;
-     opacity: 0;
-     transition: opacity 0.3s ease;
+     font-size: 0.95rem;
+     font-weight: 600;
+     letter-spacing: 0.2px;
+     color: var(--color-text);
+     background: transparent;
+     transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 120ms ease, opacity 120ms ease;
+     will-change: transform, opacity;
+     -webkit-tap-highlight-color: transparent;
 }
 
-.btn:hover::before {
-     opacity: 1;
+.btn::before { display: none; }
+
+.btn:hover {
+     transform: translateY(-1px);
+     box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+     transition: transform 160ms cubic-bezier(.22,.9,.3,1), box-shadow 160ms cubic-bezier(.22,.9,.3,1);
+     will-change: transform, box-shadow;
+}
+
+.btn:active {
+     transform: translateY(0);
+     box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+     transition: transform 120ms linear, box-shadow 120ms linear;
+}
+
+.btn:focus-visible {
+     outline: 3px solid rgba(96,165,250,0.16);
+     outline-offset: 3px;
+     border-radius: 10px;
 }
 
 .btn.primary {
-     background-color: rgba(96, 165, 250, 0.8);
+     background-color: var(--color-primary);
      color: var(--color-white);
-     box-shadow: 
-          0 4px 16px rgba(96, 165, 250, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+     border-color: transparent;
+     box-shadow: 0 6px 18px rgba(38,110,150,0.12);
 }
-.btn.primary:hover { 
-     background-color: rgba(59, 130, 246, 0.9);
-     box-shadow: 
-          0 8px 24px rgba(96, 165, 250, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+.btn.primary:hover {
+     background-color: var(--color-primary-hover);
+     box-shadow: 0 10px 26px rgba(38,110,150,0.14);
+}
+.btn.primary:active {
+     transform: translateY(0);
+     box-shadow: 0 6px 14px rgba(38,110,150,0.10);
 }
 
 .btn.danger {
-     background-color: rgba(251, 113, 133, 0.8);
+     background-color: var(--color-danger);
      color: var(--color-white);
-     box-shadow: 
-          0 4px 16px rgba(251, 113, 133, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+     border-color: transparent;
+     box-shadow: 0 6px 18px rgba(160,40,40,0.10);
 }
-.btn.danger:hover { 
-     background-color: rgba(244, 63, 94, 0.9);
-     box-shadow: 
-          0 8px 24px rgba(251, 113, 133, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+.btn.danger:hover {
+     background-color: var(--color-danger-hover);
+     box-shadow: 0 10px 26px rgba(160,40,40,0.12);
 }
 
 .btn.warning {
-     background-color: rgba(245, 158, 11, 0.8);
+     background-color: var(--color-warning);
      color: var(--color-white);
-     box-shadow: 
-          0 4px 16px rgba(245, 158, 11, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+     border-color: transparent;
+     box-shadow: 0 6px 18px rgba(140,90,20,0.10);
 }
-.btn.warning:hover { 
-     background-color: rgba(217, 119, 6, 0.9);
-     box-shadow: 
-          0 8px 24px rgba(245, 158, 11, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+.btn.warning:hover {
+     background-color: var(--color-warning-hover);
+     box-shadow: 0 10px 26px rgba(140,90,20,0.12);
 }
 
 .btn:not(.primary):not(.danger):not(.warning) {
-     background-color: var(--color-muted-2);
-     color: var(--color-white);
-     box-shadow: 
-          0 2px 8px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+     background: transparent;
+     color: var(--color-text);
+     border-color: var(--glass-border);
+     box-shadow: none;
 }
 .btn:not(.primary):not(.danger):not(.warning):hover {
-     background-color: var(--color-muted);
-     box-shadow: 
-          0 4px 12px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+     background: rgba(255,255,255,0.03);
+     border-color: var(--glass-border-strong);
+     box-shadow: 0 6px 12px rgba(0,0,0,0.04);
 }
 
+.btn.ghost {
+     background: rgba(255,255,255,0.04);
+     color: var(--color-text);
+     border-color: transparent;
+}
+.btn.ghost:hover {
+     background: rgba(255,255,255,0.06);
+     box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.btn.icon {
+     padding: 8px;
+     width: 40px;
+     height: 40px;
+     min-width: 40px;
+     border-radius: 8px;
+}
+
+.btn[disabled],
+.btn.disabled {
+     opacity: 0.5;
+     pointer-events: none;
+     transform: none;
+     box-shadow: none;
+}
+
+/* Small responsive tweak */
+@media (max-width: 420px) {
+     .btn { padding: 7px 10px; font-size: 0.92rem; min-height: 36px; border-radius: 8px; }
+}
 
 /* =========================
      Toggles & Controls
@@ -499,28 +513,6 @@ header .logo:focus-visible {
 
 .header-controls .dropdown { position: relative; display: inline-block; }
 
-#appearance-dropdown-btn {
-     width: 44px;
-     height: 44px;
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     border-radius: 10px;
-     font-size: 1.1rem;
-     line-height: 1;
-     transition: background-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 120ms ease;
-     cursor: pointer;
-     border: 1px solid transparent;
-}
-#appearance-dropdown-btn:hover { transform: translateY(-1px); }
-#appearance-dropdown-btn[aria-expanded="true"] {
-     background: var(--color-surface-2);
-     color: var(--color-text);
-     box-shadow:
-          0 10px 30px rgba(0,0,0,0.10),
-          inset 0 1px 0 var(--glass-border-strong);
-     border-color: var(--glass-border);
-}
 
 #appearance-dropdown {
      position: absolute;
@@ -651,3 +643,24 @@ header .logo:focus-visible {
           animation: none !important;
      }
 }
+
+.hidden {
+     opacity: 0;
+     transform: translateY(-6px) scale(0.995);
+     pointer-events: none !important;
+     transition: opacity 200ms ease, transform 200ms ease;
+     will-change: opacity, transform;
+}
+
+.hidden,
+.hidden * {
+     pointer-events: none !important;
+     cursor: default !important;
+     user-select: none !important;
+     -webkit-user-select: none !important;
+     touch-action: none !important;
+     caret-color: transparent !important;
+}
+
+.hidden.fade-out { animation: fadeOut 300ms forwards; }
+.hidden.fade-in { animation: fadeIn 300ms forwards; }
