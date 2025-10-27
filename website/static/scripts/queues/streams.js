@@ -22,7 +22,7 @@
         const uuid = job?.uuid; // <-- wichtig
 
         const info = [
-            `<p><strong>PC:</strong> ${pc}</p>`,
+            `<p><strong>From PC:</strong> ${pc}</p>`,
             `<p><strong>Plot:</strong> ${plot}</p>`,
             `<p><strong>Overlay:</strong> ${overlay}</p>`
         ].join("");
@@ -32,12 +32,14 @@
                 <img src="${imgUrl}" class="unlisted-image" alt="IMG" loading="lazy" decoding="async">
                 <div class="unlisted-info">${info}</div>
                 <button class="btn primary print-btn" type="button" data-uuid="${uuid}">Print</button>
+                <button class="btn danger" type="button" id="delete-${uuid}" data-uuid="${uuid}">Delete</button>
                 </div>`;
         }
 
         return `<div class="queue-item">
             <img src="${imgUrl}" class="unlisted-image" alt="IMG" loading="lazy" decoding="async">
             <div class="queue-info">${info}</div>
+            <button class="btn danger" type="button" id="delete-${uuid}" data-uuid="${uuid}">Delete</button>
             </div>`;
     };
 

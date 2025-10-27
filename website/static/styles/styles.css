@@ -517,3 +517,4 @@
 .badge.success { background: linear-gradient(180deg, rgba(52,211,153,0.10), rgba(52,211,153,0.04)); color: var(--color-success); }
 .badge.warn    { background: linear-gradient(180deg, rgba(245,158,11,0.10), rgba(245,158,11,0.04)); color: var(--color-warning); }
 .badge.danger  { background: linear-gradient(180deg, rgba(251,113,133,0.10), rgba(251,113,133,0.04)); color: var(--color-danger); }
+
