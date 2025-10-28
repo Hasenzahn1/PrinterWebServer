@@ -31,11 +31,6 @@
             <div class="export-wrapper hidden">
                 <input type="text" id="export-filename" placeholder="overlayname.json">
                 <button class="btn primary export-confirm-btn" type="button">Save</button>
-               <label class="toggle" title="Save exported template to server">
-                    <span style="margin-left:.5rem;margin-right:.5rem;font-size:14px;">Save to server?</span>
-                    <input id="save-to-server" type="checkbox" checked>
-                    <span class="slider"><span></span></span>
-                </label>
             </div>
             
             <button id="toggle-overlay-grid" class="btn" title="Toggle Overlay Grid" aria-pressed="true">🔲</button>
@@ -204,18 +199,18 @@
         <ul class="overlay-templates-list">
             {% if overlay_templates %}
                 {% for tpl in overlay_templates %}
-                <li class="template-item" data-json="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}">
-                    <div class="template-preview" style="margin-bottom:.5rem;">
-                    <div class="overlay-stage" style="position:relative; overflow:hidden;">
-                        <img src="{{ url_for('static', filename='images/Testpage.png') }}" alt="Template preview" class="overlay-image" style="display:block; width:100%; height:auto;" />
-                        <div class="overlay-layer" style="position:absolute; inset:0;"></div>
-                    </div>
-                    </div>
+                    <li class="template-item" data-json="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}">
+                        <div class="template-preview" style="margin-bottom:.5rem;">
+                        <div class="overlay-stage" style="position:relative; overflow:hidden;">
+                            <img src="{{ url_for('static', filename='images/Testpage.png') }}" alt="Template preview" class="overlay-image" style="display:block; width:100%; height:auto;" />
+                            <div class="overlay-layer" style="position:absolute; inset:0;"></div>
+                        </div>
+                        </div>
 
-                    <a href="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}" target="_blank" rel="noopener">{{ tpl }}</a>
-                    <button class="btn small import-template" data-file="{{ tpl }}" title="Import template">Import</button>
-                    <button class="btn small danger delete-template" data-file="{{ tpl }}" title="Delete template">Delete</button>
-                </li>
+                        <a href="{{ url_for('static', filename='overlay-templates/' ~ tpl) }}" target="_blank" rel="noopener">{{ tpl }}</a>
+                        <button class="btn small import-template" data-file="{{ tpl }}" title="Import template">Import</button>
+                        <button class="btn small danger delete-template" data-file="{{ tpl }}" title="Delete template">Delete</button>
+                    </li>
                 {% endfor %}
             {% else %}
                 <li class="empty">No templates found!</li>

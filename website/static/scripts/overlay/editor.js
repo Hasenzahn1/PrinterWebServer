@@ -322,14 +322,32 @@
         const btn = document.querySelector(".export-confirm-btn");
         const filenameEl = $("#export-filename");
         if (!btn || !filenameEl) return;
+
         btn.addEventListener("click", async () => {
             let filename = (filenameEl.value?.trim()) || "overlay.json";
             if (!filename.toLowerCase().endsWith(".json")) filename += ".json";
-            const payload = await serializeOverlay();
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-            document.querySelector(".export-wrapper")?.classList.add("hidden");
+            try {
+                const payload = await serializeOverlay();
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+                const form = new FormData();
+                form.append("template", blob, filename);
+
+                const resp = await fetch("/api/template/upload", {
+                    method: "POST",
+                    body: form,
+                    credentials: "same-origin"
+                });
+
+                if (resp.status === 201) {
+                    alert("Template uploaded: " + filename);
+                } else {
+                    const body = await resp.text().catch(() => resp.statusText || String(resp.status));
+                    alert("Failed to upload template: " + (body || resp.status));
+                }
+            } catch (err) {
+                console.warn("Upload error", err);
+                alert("Error uploading template");
+            }
         });
     };
 
@@ -344,25 +362,6 @@
             } else if (f.type.startsWith("image/")) {
                 const fr = new FileReader(); fr.onload = () => { const imgEl = $("#overlay-image"); imgEl ? (imgEl.src = fr.result) : createImageNode(fr.result); }; fr.readAsDataURL(f);
             }
-        });
-    };
-
-    // Export to server
-    const attachExportToServerHandler = () => {
-        const exportBtn = document.querySelector(".export-server-btn");
-        const filenameEl = $("#export-filename");
-        if (!exportBtn || !filenameEl) return;
-        exportBtn.addEventListener("click", async () => {
-            let filename = (filenameEl.value?.trim()) || "overlay.json";
-            if (!filename.toLowerCase().endsWith(".json")) filename += ".json";
-            try {
-                const payload = await serializeOverlay();
-                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-                const form = new FormData(); form.append("template", blob, filename);
-                const resp = await fetch("/api/template/upload", { method: "POST", body: form, credentials: "same-origin" });
-                if (resp.status === 201) { document.querySelector(".export-wrapper")?.classList.add("hidden"); alert("Template uploaded: " + filename); }
-                else { alert("Failed to upload template: " + (resp.statusText || resp.status)); }
-            } catch { alert("Error uploading template"); }
         });
     };
 
@@ -484,7 +483,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         attachToGlobalFileInput();
         attachExportHandler();
-        attachExportToServerHandler();
         layer && layer.addEventListener("click", () => select(null));
         attachKeyboardShortcuts();
     });

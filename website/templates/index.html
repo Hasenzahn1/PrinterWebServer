@@ -7,7 +7,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/overlay.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/root.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/mobile.css') }}" media="(max-width: 768px)">
 
@@ -69,7 +68,16 @@
             <p id="current-box-overlay"><strong>Overlay:</strong>-</p>
           </div>
 
-          <p id="current-box-no-data">No job currently running</p>
+          <div id="current-box-no-data" class="loop-wrapper">
+            <div class="mountain"></div>
+            <div class="hill"></div>
+            <div class="tree"></div>
+            <div class="tree"></div>
+            <div class="tree"></div>
+            <div class="rock"></div>
+            <div class="truck"></div>
+            <div class="wheels"></div>
+          </div> 
         </div>
 
         <div class="progress-bar">

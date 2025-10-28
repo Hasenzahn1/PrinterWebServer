@@ -31,34 +31,34 @@
     Theme variables
     ========================= */
 
-:root[data-theme="dark"] {
-     --color-bg: rgba(7, 19, 35, 0.95);
-     --color-danger: #ff6b6b;
-     --color-danger-hover: #ff4b4b;
-     --color-gray: #24323b;
-     --color-header-bg: linear-gradient(180deg, rgba(10,24,40,0.9), rgba(6,14,26,0.85));
-     --color-muted: #9aa6b2;
-     --color-muted-2: #6f7d88;
-     --color-muted-3: #16232b;
-     --color-panel-bg: rgba(25, 33, 43, 0.2);
-     --color-popup-bg: rgba(10, 18, 28, 0.75);
-     --color-primary: #56c2ff;
-     --color-primary-hover: #2aa7ff;
-     --color-surface: rgba(10, 16, 26, 0.65);
-     --color-surface-2: rgba(14, 22, 34, 0.75);
-     --color-success: #34d399;
-     --color-text: #e6f3fb;
+:root {
+     --color-bg: #111827;
+     --color-danger: #f43f5e;
+     --color-danger-hover: #e11d48;
+     --color-gray: #374151;
+     --color-header-bg: rgba(17, 24, 39, 0.3);
+     --color-muted: #9ca3af;
+     --color-muted-2: #6b7280;
+     --color-muted-3: #1f2937;
+     --color-panel-bg: rgba(31, 41, 55, 0.2);
+     --color-popup-bg: rgba(31, 41, 55, 0.1);
+     --color-primary: #a855f7;
+     --color-primary-hover: #9333ea;
+     --color-surface: rgba(31, 41, 55, 0.85);
+     --color-surface-2: rgba(47, 50, 54, 0.4);
+     --color-success: #22c55e;
+     --color-text: #f3f4f6;
      --color-warning: #f59e0b;
      --color-warning-hover: #d97706;
      --color-white: #ffffff;
-     --shadow-color: rgba(0, 6, 20, 0.65);
-     --status-error-bg: rgba(255, 107, 107, 0.06);
-     --status-offline-bg: rgba(127, 140, 141, 0.05);
-     --status-pending-bg: rgba(245, 158, 11, 0.06);
-     --status-printing-bg: rgba(86, 194, 255, 0.06);
-     --status-info: #56c2ff;
-     --glass-border: rgba(255, 255, 255, 0.06);
-     --glass-border-strong: rgba(255, 255, 255, 0.12);
+     --shadow-color: rgba(0, 0, 0, 0.5);
+     --status-error-bg: rgba(244, 63, 94, 0.1);
+     --status-offline-bg: rgba(107, 114, 128, 0.1);
+     --status-pending-bg: rgba(245, 158, 11, 0.1);
+     --status-printing-bg: rgba(168, 85, 247, 0.1);
+     --status-info: #a855f7;
+     --glass-border: rgba(255, 255, 255, 0.08);
+     --glass-border-strong: rgba(255, 255, 255, 0.15);
 }
 
 :root[data-theme="lyntr"] {
@@ -124,7 +124,7 @@ html, body, .panel, header, .container, .current-box {
 ========================= */
 
 body {
-     font-family: Arial, sans-serif;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Minecraft', sans-serif;
      background-color: var(--color-bg);
      color: var(--color-text);
      position: relative;
@@ -138,11 +138,11 @@ body::after {
      pointer-events: none;
      z-index: -2;
      background:
-     radial-gradient(circle at 10% 18%, rgba(96,165,250,0.28) 0px, rgba(96,165,250,0.20) 120px, transparent 240px),
-     radial-gradient(circle at 85% 25%, rgba(20,184,166,0.24) 0px, rgba(20,184,166,0.14) 140px, transparent 280px),
-     radial-gradient(circle at 50% 80%, rgba(139,92,246,0.18) 0px, rgba(139,92,246,0.10) 160px, transparent 320px),
-     radial-gradient(circle at 20% 70%, rgba(249,115,222,0.14) 0px, rgba(249,115,222,0.08) 120px, transparent 240px),
-     radial-gradient(circle at 60% 50%, rgba(255,179,71,0.12) 0px, rgba(255,179,71,0.06) 180px, transparent 360px);
+          radial-gradient(circle at 10% 18%, rgba(96,165,250,0.48) 0px, rgba(96,165,250,0.36) 120px, transparent 240px),
+          radial-gradient(circle at 85% 25%, rgba(20,184,166,0.44) 0px, rgba(20,184,166,0.28) 140px, transparent 280px),
+          radial-gradient(circle at 50% 80%, rgba(139,92,246,0.38) 0px, rgba(139,92,246,0.22) 160px, transparent 320px),
+          radial-gradient(circle at 20% 70%, rgba(249,115,222,0.34) 0px, rgba(249,115,222,0.20) 120px, transparent 240px),
+          radial-gradient(circle at 60% 50%, rgba(255,179,71,0.30) 0px, rgba(255,179,71,0.16) 180px, transparent 360px);
      filter: blur(40px) saturate(300%);
      mix-blend-mode: overlay;
      transform: translateZ(0);
@@ -151,7 +151,7 @@ body::after {
 
 @keyframes bubblesFloat {
      0%   { transform: translateY(0) translateX(0) scale(1); }
-     50%  { transform: translateY(-30px) translateX(30px) scale(1.02); }
+     50%  { transform: translateY(-150px) translateX(150px) scale(2); }
      100% { transform: translateY(0) translateX(0) scale(1); }
 }
 
@@ -404,6 +404,7 @@ header .logo:focus-visible {
 @media (max-width: 420px) {
      .btn { padding: 7px 10px; font-size: 0.92rem; min-height: 36px; border-radius: 8px; }
 }
+
 
 /* =========================
      Toggles & Controls
