@@ -1,7 +1,7 @@
 import json
 import os
 
-from PIL import Image
+from PIL import Image, ImageColor
 
 from src.image.Overlay import Overlay
 
@@ -27,7 +27,37 @@ class PrintJob:
         if self.selected_overlay is None: return image
 
         image = self.selected_overlay.apply(image, self)
-        return image
+        return self.add_vertical_padding(image, 20)
+
+    def add_vertical_padding(self, img: Image.Image, amount: int, background=None) -> Image.Image:
+        if amount < 0:
+            raise ValueError("abstand muss >= 0 sein")
+
+        w, h = img.size
+        new_h = h + 2 * amount
+        mode = img.mode
+
+        # Standard-Hintergrund: transparent (falls Alphakanal), sonst Weiß
+        if background is None:
+            if "A" in mode:  # RGBA, LA usw.
+                background = (0, 0, 0, 0)
+            else:
+                background = 255 if mode == "L" else (255, 255, 255)
+        else:
+            # Strings wie "#fff" -> Tupel; an den Bildmodus anpassen
+            if isinstance(background, str):
+                rgb = ImageColor.getrgb(background)
+                if mode == "L":
+                    # in Graustufe umwandeln
+                    background = int(round(0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]))
+                elif "A" in mode and len(rgb) == 3:
+                    background = (*rgb, 255)
+                else:
+                    background = rgb
+
+        canvas = Image.new(mode, (w, new_h), background)
+        canvas.paste(img, (0, amount))
+        return canvas
 
     def delete(self):
         os.remove(self.image_file)
