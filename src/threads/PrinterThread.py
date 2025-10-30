@@ -8,7 +8,6 @@ if CUPS_ENABLED: import cups
 
 import tempfile
 import os
-from PIL import Image
 
 from src.PrintJob import PrintJob
 
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
 
 class PrinterThread(threading.Thread):
 
-    PRINT_COUNTDOWN = 5
+    PRINT_COUNTDOWN = 60
 
     def __init__(self, pm: "PrintManager"):
         super().__init__(name="PrinterThread")
