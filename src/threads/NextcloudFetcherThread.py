@@ -18,7 +18,7 @@ class NextcloudFetcherThread(threading.Thread):
     METADATA_FOLDER = "downloads/metadata/"
     TEMP_FOLDER = "downloads/temp/"
 
-    DELETE_METADATA_FILES = False
+    DELETE_METADATA_FILES = True
 
     def __init__(self, state: "PrintManager"):
         super().__init__(name="NextcloudFetcherThread")
@@ -73,10 +73,14 @@ class NextcloudFetcherThread(threading.Thread):
         :param new_file_name:
         :return: Parsed Metadata
         """
-        name_to_check_for = image_file.get_name().split(".")[0] + ".json"
+        name_to_check_for = ".".join(image_file.get_name().split(".")[:-1]) + ".json"
         path_to_check_for = self.config.nc_metadata_folder + name_to_check_for
 
+        print(path_to_check_for)
+
         if not self._file_exists(path_to_check_for): return {}, ""
+
+        print("File Exists")
 
         self._download_file(path_to_check_for, new_file_name + ".json", self.METADATA_FOLDER)
 

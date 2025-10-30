@@ -15,7 +15,7 @@ class PrintManager:
         self.config: Config              = Config(config_file)
         self.unlisted: list[PrintJob]    = []
         self.queue: list[PrintJob]       = []
-        self.default_overlay: Overlay    = Overlay()
+        self.default_overlay: Overlay    = Overlay("website/static/overlay-templates/new_overlay.json")
         self.app: Flask                  = app
 
         self.current_print_job: PrintJob = None
@@ -42,6 +42,8 @@ class PrintManager:
         # Enqueue next job
         if self.print_on_receive and len(self.queue) == 0 and len(self.unlisted) > 0:
             self.queue.append(self.unlisted.pop(0))
+
+        self.current_print_job.apply_default_overlay_if_not_present(self.default_overlay)
 
         return self.current_print_job
 

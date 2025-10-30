@@ -123,7 +123,7 @@ class PrinterThread(threading.Thread):
         }
 
         img = print_job.open_and_preprocess_image()
-        # img.show()
+        img.show()
 
         if not CUPS_ENABLED: return
         printer = self.pick_printer(self.conn)

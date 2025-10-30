@@ -22,7 +22,7 @@ if __name__ == "__main__":
         app = create_app()
 
         state = PrintManager("config.yml", app)
-        #state.start()
+        state.start()
 
         app.extensions["printer_manager"] = state
         app.run(debug=True, use_reloader=False, host="0.0.0.0")
